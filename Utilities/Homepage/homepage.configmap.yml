@@ -30,11 +30,11 @@ data:
             description: Tower
 
     - Utilities:
-        - My Second Service:
+        - ArgoCD:
             href: https://argocd.local.flyvmed.dk/
             description: CD for deploying IaC
         - Homeassistant:
-            href: https://homeassistant.local.flyvmed.dk/
+            href: https://homeassist.local.flyvmed.dk/
             description: Homeassistant
 
     - Media:
