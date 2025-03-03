@@ -13,7 +13,7 @@ metadata:
     gethomepage.dev/name: Homepage
 spec:
   rules:
-    - host: "homepage.local.flyvmed.dk"
+    - host: "homepages.local.flyvmed.dk"
       http:
         paths:
           - path: "/"
