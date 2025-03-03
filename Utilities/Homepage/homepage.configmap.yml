@@ -21,17 +21,23 @@ data:
             - abbr: GH
               href: https://github.com/
   services.yaml: |
-    - My First Group:
-        - My First Service:
-            href: http://localhost/
-            description: Homepage is awesome
+    - Clusters:
+        - EDZ:
+            href: http://10.0.0.11:8006/
+            description: European Dead Zone
+        - Tower:
+            href: http://10.0.0.10:8006/
+            description: Tower
 
-    - My Second Group:
+    - Utilities:
         - My Second Service:
-            href: http://localhost/
-            description: Homepage is the best
+            href: https://argocd.local.flyvmed.dk/
+            description: CD for deploying IaC
+        - Homeassistant:
+            href: https://homeassistant.local.flyvmed.dk/
+            description: Homeassistant
 
-    - My Third Group:
+    - Media:
         - My Third Service:
             href: http://localhost/
             description: Homepage is 😎
