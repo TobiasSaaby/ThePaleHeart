@@ -5,6 +5,7 @@ metadata:
   namespace: mealie
   labels:
     app.kubernetes.io/name: mealie
+  annotations:
 spec:
   ports:
     - name: http
