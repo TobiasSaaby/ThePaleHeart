@@ -32,10 +32,13 @@ data:
     - Utilities:
         - ArgoCD:
             href: https://argocd.local.flyvmed.dk/
-            description: CD for deploying IaC
+            description: Continously deploying infrastructure as code
         - Homeassistant:
             href: https://homeassist.local.flyvmed.dk/
             description: Homeassistant
+        - Mealie:
+            href: https://mealie.local.flyvmed.dk/
+            description: Home of all our recipes
 
     - Media:
         - My Third Service:
