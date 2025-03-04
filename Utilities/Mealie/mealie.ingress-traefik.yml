@@ -13,6 +13,6 @@ spec:
     - kind: Service
       name: mealie
       namespace: mealie
-      port: 3000
+      port: 9925
   tls:
     certResolver: letsencrypt
