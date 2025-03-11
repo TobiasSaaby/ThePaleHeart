@@ -13,6 +13,6 @@ spec:
     - kind: Service
       name: qbitt
       namespace: media
-      port: 6881
+      port: 8080
   tls:
     certResolver: letsencrypt

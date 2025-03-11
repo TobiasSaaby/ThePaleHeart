@@ -3,11 +3,14 @@ kind: Service
 metadata:
   name: qbittorrent
   namespace: media
+  labels:
+    app.kubernetes.io/name: qbittorrent
+  annotations:
 spec:
   ports:
     - name: http
-      port: 6881
+      port: 8080
       targetPort: http
       protocol: TCP
   selector:
-    app: qbittorrent
+    app.kubernetes.io/name: qbittorrent
