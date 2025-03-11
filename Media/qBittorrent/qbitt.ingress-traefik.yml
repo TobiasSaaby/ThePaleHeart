@@ -20,7 +20,7 @@ spec:
         - name: qbittorrent
           port: 80
       middlewares:
-        - name: default-headers-jellyfin
+        - name: default-headers-media
   tls:
     certResolver: letsencrypt
     
