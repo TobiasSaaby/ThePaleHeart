@@ -36,7 +36,9 @@ spec:
               mountPath: /downloads
           ports:
             - containerPort: 8080
-
+              name: http
+              protocol: TCP
+              
         - name: gluetun
           image: qmcgaw/gluetun
           namespace: media
