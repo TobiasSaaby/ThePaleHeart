@@ -19,5 +19,25 @@ spec:
       services:
         - name: qbittorrent
           port: 80
+      middlewares:
+        - name: default-headers-jellyfin
   tls:
     certResolver: letsencrypt
+    
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: default-headers-media
+  namespace: media
+spec:
+  headers:
+    browserXssFilter: true
+    contentTypeNosniff: true
+    forceSTSHeader: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 15552000
+    customFrameOptionsValue: SAMEORIGIN
+    customRequestHeaders:
+      X-Forwarded-Proto: https
