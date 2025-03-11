@@ -14,5 +14,3 @@ spec:
       name: qbitt
       namespace: media
       port: 8080
-  tls:
-    certResolver: letsencrypt
