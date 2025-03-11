@@ -3,9 +3,6 @@ kind: Service
 metadata:
   name: qbittorrent
   namespace: media
-  labels:
-    app.kubernetes.io/name: qbittorrent
-  annotations:
 spec:
   ports:
     - name: http
@@ -13,4 +10,4 @@ spec:
       targetPort: http
       protocol: TCP
   selector:
-    app.kubernetes.io/name: qbittorrent
+    app: qbittorrent
