@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`qbittz.local.flyvmed.dk`) 
+  - match: Host(`qbitt.local.flyvmed.dk`) && PathPrefix(`/`)
     kind: Rule
     services:
     - kind: Service
