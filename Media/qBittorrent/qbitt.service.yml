@@ -3,10 +3,14 @@ kind: Service
 metadata:
   name: qbittorrent
   namespace: media
+  labels:
+    app.kubernetes.io/name: qbittorrent
+  annotations:
 spec:
-  type: ClusterIP
   ports:
-    - port: 80
-      targetPort: 8080
+    - name: http
+      port: 8080
+      targetPort: http
+      protocol: TCP
   selector:
-    app: qbittorrent
+    app.kubernetes.io/name: qbittorrent
