@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: qbittorrent
+          namespace: media
           image: linuxserver/qbittorrent
           resources:
             limits:
@@ -38,6 +39,7 @@ spec:
 
         - name: gluetun
           image: qmcgaw/gluetun
+          namespace: media
           env:
             - name: VPNSP
               value: "protonvpn"
