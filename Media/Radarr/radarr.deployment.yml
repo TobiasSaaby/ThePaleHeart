@@ -32,7 +32,7 @@ spec:
           mountPath: /downloads
         ports:
         - containerPort: 7878
-          name: https
+          name: http
           protocol: TCP
       volumes:
       - name: config
