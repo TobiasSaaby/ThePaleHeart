@@ -17,7 +17,6 @@ spec:
     spec:
       containers:
         - name: qbittorrent
-          namespace: media
           image: linuxserver/qbittorrent
           resources:
             limits:
@@ -41,7 +40,6 @@ spec:
               
         - name: gluetun
           image: qmcgaw/gluetun
-          namespace: media
           env:
             - name: VPNSP
               value: "protonvpn"
@@ -56,7 +54,7 @@ spec:
                   name: protonvpn-secrets
                   key: PROTONVPN_PASSWORD
             - name: COUNTRY
-              value: "Germany"
+              value: "Netherlands"
           securityContext:
             capabilities:
               add:
