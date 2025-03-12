@@ -56,7 +56,9 @@ spec:
                   name: protonvpn-secrets
                   key: PROTONVPN_PASSWORD
             - name: COUNTRY
-              value: "Germany" 
+              value: "Germany"
+            - name: PORT_FORWARD_ONLY
+              value: on
           securityContext:
             capabilities:
               add:
