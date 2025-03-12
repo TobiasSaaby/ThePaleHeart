@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  namespace: media
+  labels:
+    app.kubernetes.io/name: radarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: radarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: radarr
+    spec:
+      containers:
+      - name: radarr
+        image: linuxserver/radarr
+        env:
+        - name: PUID
+          value: "1057"  
+        - name: PGID
+          value: "1056"  
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: videos
+          mountPath: /movies
+        - name: downloads
+          mountPath: /downloads
+        ports:
+        - containerPort: 7878
+          name: https
+          protocol: TCP
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: radarr-config
+      - name: videos
+        persistentVolumeClaim:
+          claimName: jellyfin-videos
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: qbitt-download  
