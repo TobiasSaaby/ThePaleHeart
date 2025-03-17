@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  namespace: media
+  labels:
+    app.kubernetes.io/name: sonarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app.kubernetes.io/name: sonarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sonarr
+    spec:
+      containers:
+      - name: sonarr
+        image: linuxserver/sonarr
+        env:
+        - name: PUID
+          value: "1057"
+        - name: PGID
+          value: "1056"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: videos
+          mountPath: /tv
+        - name: downloads
+          mountPath: /downloads
+        ports:
+        - containerPort: 8989
+          name: http
+          protocol: TCP
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: sonarr-config
+      - name: videos
+        persistentVolumeClaim:
+          claimName: jellyfin-videos
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: qbitt-download
