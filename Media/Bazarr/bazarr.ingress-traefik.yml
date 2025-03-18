@@ -13,6 +13,6 @@ spec:
     - kind: Service
       name: bazarr
       namespace: media
-      port: 8989
+      port: 6767
   tls:
     certResolver: letsencrypt
