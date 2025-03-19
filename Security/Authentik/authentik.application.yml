@@ -4,7 +4,7 @@ metadata:
   name: authentik
   namespace: authentik
 spec:
-  project: default
+  project: authentik
   source:
     chart: authentik
     repoURL: https://charts.goauthentik.io
