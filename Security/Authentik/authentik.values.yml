@@ -1,0 +1,37 @@
+global:
+    env:
+        - name: cookie-secret-key
+          valueFrom:
+            secretKeyRef: 
+              name: authentik-secret
+              key: secret-key
+        - name: postgresql-password
+          valueFrom:
+            secretKeyRef: 
+              name: authentik-secret
+              key: password
+
+
+authentik:
+    secret_key: cookie-secret-key
+    # This sends anonymous usage-data, stack traces on errors and
+    # performance data to sentry.io, and is fully opt-in
+    error_reporting:
+        enabled: true
+    postgresql:
+        password: postgresql-password
+
+server:
+    ingress:
+        # Specify kubernetes ingress controller class name
+        ingressClassName: nginx | traefik | kong
+        enabled: true
+        hosts:
+            - authentik.domain.tld
+
+postgresql:
+    enabled: true
+    auth:
+        password: postgresql-password
+redis:
+    enabled: true

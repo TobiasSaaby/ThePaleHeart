@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  project: default
+  source:
+    chart: authentik
+    repoURL: https://charts.goauthentik.io
+    targetRevision: 2025.2.2
+    helm:
+      valueFiles:
+      - values-production.yaml
+  destination:
+    name: authentik
+    namespace: authentik
