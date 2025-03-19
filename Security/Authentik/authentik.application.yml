@@ -2,9 +2,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: authentik
-  namespace: authentik
+  namespace: argocd
 spec:
-  project: authentik
+  project: default
   source:
     chart: authentik
     repoURL: https://charts.goauthentik.io
