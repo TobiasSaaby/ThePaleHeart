@@ -10,8 +10,41 @@ spec:
     repoURL: https://charts.goauthentik.io
     targetRevision: 2025.2.2
     helm:
-      valueFiles:
-      - ./authentik.values.yaml
+      values: |-
+        global:
+            env:
+                - name: cookie-secret-key
+                  valueFrom:
+                    secretKeyRef: 
+                      name: authentik-secret
+                      key: secret-key
+                - name: postgresql-password
+                  valueFrom:
+                    secretKeyRef: 
+                      name: authentik-secret
+                      key: password
+
+        authentik:
+            secret_key: cookie-secret-key
+            error_reporting:
+                enabled: true
+            postgresql:
+                password: postgresql-password
+
+        server:
+            ingress:
+                ingressClassName: traefik
+                enabled: true
+                hosts:
+                    - authentik.local.flyvmed.dk
+
+        postgresql:
+            enabled: true
+            auth:
+                password: postgresql-password
+                
+        redis:
+            enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik
