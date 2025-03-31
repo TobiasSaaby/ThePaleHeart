@@ -37,6 +37,8 @@ spec:
                 enabled: true
                 hosts:
                     - authentik.local.flyvmed.dk
+                tls:
+                  certResolver: letsencrypt
 
         postgresql:
             enabled: true
