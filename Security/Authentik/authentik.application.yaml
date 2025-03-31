@@ -11,7 +11,7 @@ spec:
     targetRevision: 2025.2.2
     helm:
       valueFiles:
-      - authentik.values.yaml
+      - ./authentik.values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik
