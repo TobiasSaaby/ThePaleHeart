@@ -33,6 +33,8 @@ spec:
 
         server:
             ingress:
+                annotations:
+                    traefik.ingress.kubernetes.io/router.tls: "true"
                 ingressClassName: traefik
                 enabled: true
                 hosts:
