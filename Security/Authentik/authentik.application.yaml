@@ -35,6 +35,7 @@ spec:
             ingress:
                 annotations:
                     traefik.ingress.kubernetes.io/router.tls: "true"
+                    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
                 ingressClassName: traefik
                 enabled: true
                 hosts:
