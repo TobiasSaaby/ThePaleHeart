@@ -14,12 +14,25 @@ spec:
     helm:
       releaseName: argocd
       valuesObject:
+        global:
+          domain: argocd.saaby.no
         configs:
           params:
             server.insecure: true
         server:
           ingress:
-            enabled: false
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            hosts:
+              - argocd.saaby.no
+            tls:
+              - secretName: argocd-server-tls
+                hosts:
+                  - argocd.saaby.no
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
