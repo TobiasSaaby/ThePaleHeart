@@ -1,0 +1,52 @@
+---
+- name: Load local bootstrap environment
+  include_tasks: load_env.yml
+
+- name: Run bootstrap prerequisites
+  include_tasks: prerequisites.yml
+
+- name: Install Longhorn with Helm
+  kubernetes.core.helm:
+    name: longhorn
+    chart_ref: longhorn/longhorn
+    chart_version: "{{ longhorn_chart_version }}"
+    release_namespace: "{{ longhorn_namespace }}"
+    create_namespace: true
+    wait: true
+    values:
+      persistence:
+        defaultClass: true
+        defaultClassReplicaCount: "{{ longhorn_default_replica_count }}"
+      defaultSettings:
+        defaultDataPath: /var/lib/longhorn
+        replicaAutoBalance: best-effort
+      ingress:
+        enabled: true
+        ingressClassName: traefik
+        host: "{{ longhorn_domain }}"
+        tls: true
+        tlsSecret: longhorn-ui-tls
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+          traefik.ingress.kubernetes.io/router.entrypoints: websecure
+          traefik.ingress.kubernetes.io/router.tls: "true"
+  delegate_to: localhost
+  run_once: true
+
+- name: Apply Longhorn Argo CD application
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ longhorn_application_manifest }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Wait until Argo CD owns Longhorn
+  include_tasks: wait_argocd_application.yml
+  vars:
+    argocd_application_name: longhorn
+
+- name: Longhorn ownership complete
+  debug:
+    msg: ok
+  delegate_to: localhost
+  run_once: true

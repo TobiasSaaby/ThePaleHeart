@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ArgoCD/argocd.application.yaml
+  - CertManager/cert-manager.application.yaml
+  - CertManager/cert-manager-issuers.application.yaml
+  - SimplyDNSWebhook/simply-dns-webhook.application.yaml
+  - Longhorn/longhorn.application.yaml

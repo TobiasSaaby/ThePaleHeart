@@ -1,0 +1,14 @@
+---
+- name: Check Helm is installed on the control node
+  command: helm version --short
+  changed_when: false
+  delegate_to: localhost
+  run_once: true
+
+- name: Add Helm repositories
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.repo_url }}"
+  loop: "{{ gitops_helm_repositories }}"
+  delegate_to: localhost
+  run_once: true

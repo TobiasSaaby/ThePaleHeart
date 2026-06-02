@@ -1,0 +1,106 @@
+---
+- name: Load local bootstrap environment
+  include_tasks: load_env.yml
+
+- name: Run bootstrap prerequisites
+  include_tasks: prerequisites.yml
+
+- name: Install cert-manager with Helm
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    chart_version: "{{ cert_manager_chart_version }}"
+    release_namespace: "{{ cert_manager_namespace }}"
+    create_namespace: true
+    wait: true
+    values:
+      crds:
+        enabled: true
+      prometheus:
+        enabled: true
+      webhook:
+        timeoutSeconds: 30
+  delegate_to: localhost
+  run_once: true
+
+- name: Install Simply DNS webhook with Helm
+  kubernetes.core.helm:
+    name: simply-dns-webhook
+    chart_ref: simply-dns-webhook/simply-dns-webhook
+    chart_version: "{{ simply_dns_webhook_chart_version }}"
+    release_namespace: "{{ cert_manager_namespace }}"
+    create_namespace: true
+    wait: true
+    values:
+      certManager:
+        namespace: "{{ cert_manager_namespace }}"
+        serviceAccountName: cert-manager
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+  delegate_to: localhost
+  run_once: true
+
+- name: Require Simply API credentials for DNS-01
+  assert:
+    that:
+      - simply_account_name | length > 0
+      - simply_api_key | length > 0
+    fail_msg: "Set simply_account_name and simply_api_key, preferably through Ansible Vault or --extra-vars."
+  delegate_to: localhost
+  run_once: true
+
+- name: Create Simply DNS webhook credentials secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ simply_credentials_secret_name }}"
+        namespace: "{{ cert_manager_namespace }}"
+      type: Opaque
+      stringData:
+        account-name: "{{ simply_account_name }}"
+        api-key: "{{ simply_api_key }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Apply cert-manager ClusterIssuers
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ item }}"
+  loop: "{{ lookup('fileglob', cert_manager_issuers_path ~ '/*.clusterissuer.yaml', wantlist=True) }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Apply cert-manager Argo CD applications
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ item }}"
+  loop:
+    - "{{ cert_manager_application_manifest }}"
+    - "{{ simply_dns_webhook_application_manifest }}"
+    - "{{ cert_manager_issuers_application_manifest }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Wait until Argo CD owns cert-manager
+  include_tasks: wait_argocd_application.yml
+  loop:
+    - cert-manager
+    - simply-dns-webhook
+    - cert-manager-issuers
+  loop_control:
+    loop_var: argocd_application_name
+
+- name: cert-manager ownership complete
+  debug:
+    msg: ok
+  delegate_to: localhost
+  run_once: true

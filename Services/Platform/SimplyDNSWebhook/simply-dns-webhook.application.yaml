@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: simply-dns-webhook
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://runnerm.github.io/simply-dns-webhook/
+    chart: simply-dns-webhook
+    targetRevision: 1.9.0
+    helm:
+      releaseName: simply-dns-webhook
+      valuesObject:
+        certManager:
+          namespace: cert-manager
+          serviceAccountName: cert-manager
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

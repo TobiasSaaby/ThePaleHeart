@@ -1,0 +1,34 @@
+---
+- name: Check for local bootstrap .env
+  stat:
+    path: "{{ bootstrap_env_file }}"
+  register: bootstrap_env_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Read local bootstrap .env
+  set_fact:
+    bootstrap_env_lines: "{{ lookup('file', bootstrap_env_file).splitlines() }}"
+  when: bootstrap_env_file_stat.stat.exists
+  delegate_to: localhost
+  run_once: true
+
+- name: Parse local bootstrap .env
+  set_fact:
+    bootstrap_env: "{{ bootstrap_env | default({}) | combine({item.split('=', 1)[0]: item.split('=', 1)[1] | regex_replace('^\"|\"$', '') | regex_replace(\"^'|'$\", '')}) }}"
+  loop: "{{ bootstrap_env_lines | default([]) }}"
+  when:
+    - item is match('^[A-Za-z_][A-Za-z0-9_]*=')
+    - item.split('=', 1)[1] | length > 0
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Apply local bootstrap .env values
+  set_fact:
+    simply_account_name: "{{ bootstrap_env.SIMPLY_ACCOUNT_NAME | default(simply_account_name) }}"
+    simply_api_key: "{{ bootstrap_env.SIMPLY_API_KEY | default(simply_api_key) }}"
+    longhorn_domain: "{{ bootstrap_env.LONGHORN_DOMAIN | default(longhorn_domain) }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true

@@ -1,0 +1,46 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Upgrade packages
+  apt:
+    upgrade: dist
+
+- name: Install base tools
+  apt:
+    name:
+      - curl
+      - vim
+      - ca-certificates
+      - iptables
+    state: present
+
+- name: Disable swap immediately
+  command: swapoff -a
+  when: ansible_facts['swaptotal_mb'] | default(0) > 0
+
+- name: Remove swap from fstab
+  replace:
+    path: /etc/fstab
+    regexp: ".*swap.*"
+    replace: ""
+
+- name: Load kernel modules (overlay)
+  modprobe:
+    name: overlay
+    state: present
+
+- name: Load kernel modules (br_netfilter)
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set sysctl for Kubernetes networking
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { name: net.bridge.bridge-nf-call-iptables, value: 1 }
+    - { name: net.ipv4.ip_forward, value: 1 }

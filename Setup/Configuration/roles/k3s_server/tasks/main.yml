@@ -1,0 +1,60 @@
+- name: Set init node fact
+  set_fact:
+    is_init: "{{ inventory_hostname == groups['k3s_servers'][0] }}"
+
+- name: Check if k3s already installed
+  stat:
+    path: "{{ k3s_config_dir }}/k3s.yaml"
+  register: k3s_installed
+
+- name: Check if k3s service exists
+  systemd:
+    name: k3s
+  register: k3s_service
+  failed_when: false
+
+- name: Install k3s on init node
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - server \
+      --cluster-init \
+      --flannel-iface {{ k3s_iface }} \
+      --node-ip {{ local_ip }} \
+      --advertise-address {{ local_ip }} \
+      --tls-san {{ api_domain }}
+  when:
+    - is_init
+    - not k3s_installed.stat.exists
+
+- name: Read k3s token
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: token_file
+  delegate_to: "{{ groups['k3s_servers'][0] }}"
+  run_once: true
+
+- name: Set cluster token fact
+  set_fact:
+    k3s_token: "{{ token_file.content | b64decode | trim }}"
+
+- name: Install k3s on join nodes
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - server \
+      --server https://{{ hostvars[groups['k3s_servers'][0]].local_ip }}:6443 \
+      --token {{ k3s_token }} \
+      --flannel-iface {{ k3s_iface }} \
+      --node-ip {{ local_ip }} \
+      --advertise-address {{ local_ip }} \
+      --tls-san {{ api_domain }}
+  when:
+    - not is_init
+    - not k3s_installed.stat.exists
+
+- name: Ensure k3s service is enabled and running
+  systemd:
+    name: k3s
+    enabled: true
+    state: started
+
+- name: Show node status command hint
+  debug:
+    msg: "Run: kubectl get nodes --kubeconfig /etc/rancher/k3s/k3s.yaml"

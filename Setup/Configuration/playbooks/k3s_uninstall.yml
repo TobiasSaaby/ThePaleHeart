@@ -1,0 +1,40 @@
+- hosts: k3s_servers
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Run k3s uninstall script (if exists)
+      shell: |
+        if [ -f /usr/local/bin/k3s-uninstall.sh ]; then
+          /usr/local/bin/k3s-uninstall.sh
+        fi
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Run k3s agent uninstall script (if exists)
+      shell: |
+        if [ -f /usr/local/bin/k3s-agent-uninstall.sh ]; then
+          /usr/local/bin/k3s-agent-uninstall.sh
+        fi
+      args:
+        executable: /bin/bash
+      ignore_errors: true
+
+    - name: Remove k3s directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/rancher
+        - /var/lib/rancher/k3s
+        - /var/lib/kubelet
+        - /var/lib/cni
+        - /var/lib/etcd
+
+    - name: Stop k3s service if present
+      systemd:
+        name: k3s
+        state: stopped
+        enabled: false
+      ignore_errors: true

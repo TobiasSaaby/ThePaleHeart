@@ -1,0 +1,11 @@
+- hosts: k3s_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    k3s_iface: enp7s0
+    k3s_config_dir: /etc/rancher/k3s
+    api_domain: k3s.saaby.no
+
+  roles:
+    - k3s_server

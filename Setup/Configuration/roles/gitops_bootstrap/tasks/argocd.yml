@@ -1,0 +1,42 @@
+---
+- name: Load local bootstrap environment
+  include_tasks: load_env.yml
+
+- name: Run bootstrap prerequisites
+  include_tasks: prerequisites.yml
+
+- name: Install minimal Argo CD with Helm
+  kubernetes.core.helm:
+    name: argocd
+    chart_ref: argo/argo-cd
+    chart_version: "{{ argocd_chart_version }}"
+    release_namespace: "{{ argocd_namespace }}"
+    create_namespace: true
+    wait: true
+    values:
+      configs:
+        params:
+          server.insecure: true
+      server:
+        ingress:
+          enabled: false
+  delegate_to: localhost
+  run_once: true
+
+- name: Apply Argo CD self-management application
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ argocd_application_manifest }}"
+  delegate_to: localhost
+  run_once: true
+
+- name: Wait until Argo CD owns itself
+  include_tasks: wait_argocd_application.yml
+  vars:
+    argocd_application_name: argocd
+
+- name: Argo CD ownership complete
+  debug:
+    msg: ok
+  delegate_to: localhost
+  run_once: true

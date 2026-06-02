@@ -1,0 +1,16 @@
+---
+- name: Wait for Argo CD to own {{ argocd_application_name }}
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: Application
+    name: "{{ argocd_application_name }}"
+    namespace: "{{ argocd_namespace }}"
+  register: argocd_application_status
+  until:
+    - argocd_application_status.resources | length == 1
+    - argocd_application_status.resources[0].status.sync.status | default('') == 'Synced'
+    - argocd_application_status.resources[0].status.health.status | default('') == 'Healthy'
+  retries: "{{ argocd_ownership_wait_retries }}"
+  delay: "{{ argocd_ownership_wait_delay }}"
+  delegate_to: localhost
+  run_once: true
