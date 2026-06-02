@@ -4,11 +4,14 @@
 *.env
 .venv/
 !Setup/Configuration/.env.example
+!Setup/Provisioning/.env.example
 
 # Terraform
 **/.terraform/
 *.tfstate
 *.tfstate.*
+*.tfvars
+*.tfvars.json
 crash.log
 override.tf
 override.tf.json
@@ -19,3 +22,5 @@ override.tf.json
 # Ansible
 *.retry
 inventory.ini
+Setup/Configuration/inventory/*.ini
+!Setup/Configuration/inventory/*.example.ini

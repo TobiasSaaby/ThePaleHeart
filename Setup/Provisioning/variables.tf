@@ -3,17 +3,31 @@ variable "servers" {
     ip   = string
     role = string
   }))
-
-  default = {
-    k3s-srv-1 = { ip = "10.10.1.10", role = "server" }
-    k3s-srv-2 = { ip = "10.10.1.11", role = "server" }
-    k3s-srv-3 = { ip = "10.10.1.12", role = "server" }
-  }
 }
 
 variable "location" {
   type    = string
   default = "hel1"
+}
+
+variable "network_ip_range" {
+  type    = string
+  default = "10.10.0.0/16"
+}
+
+variable "network_subnet_ip_range" {
+  type    = string
+  default = "10.10.1.0/24"
+}
+
+variable "network_zone" {
+  type    = string
+  default = "eu-central"
+}
+
+variable "k3s_load_balancer_private_ip" {
+  type    = string
+  default = "10.10.1.5"
 }
 
 variable "k3s_server_type" {

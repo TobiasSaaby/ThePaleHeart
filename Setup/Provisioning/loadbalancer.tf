@@ -12,7 +12,7 @@ resource "hcloud_load_balancer_network" "k3s_lb_network" {
   load_balancer_id = hcloud_load_balancer.k3s_api.id
   network_id       = hcloud_network.k3s_net.id
 
-  ip = "10.10.1.5"
+  ip = var.k3s_load_balancer_private_ip
 }
 
 resource "hcloud_load_balancer_service" "k3s_api" {

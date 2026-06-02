@@ -5,7 +5,7 @@
   vars:
     k3s_iface: enp7s0
     k3s_config_dir: /etc/rancher/k3s
-    api_domain: k3s.saaby.no
+    api_domain: "{{ lookup('env', 'K3S_API_DOMAIN') | default('k3s.local', true) }}"
 
   roles:
     - k3s_server

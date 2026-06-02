@@ -2,4 +2,4 @@
   become: true
 
   roles:
-    - base
+    - os_baseline
