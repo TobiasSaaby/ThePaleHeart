@@ -19,3 +19,7 @@ output "ansible_inventory" {
     ]
   ))
 }
+
+output "k3s_load_balancer_ipv4" {
+  value = hcloud_load_balancer.k3s_api.ipv4
+}

@@ -11,8 +11,8 @@ resource "hcloud_server" "vps" {
   ]
 
   network {
-      network_id = hcloud_network.k3s_net.id
-      ip         = each.value.ip
+    network_id = hcloud_network.k3s_net.id
+    ip         = each.value.ip
   }
 
   labels = {

@@ -1,0 +1,13 @@
+---
+bootstrap_env_file: "{{ playbook_dir }}/../.env"
+simply_api_base_url: https://api.simply.com/2
+simply_dns_product: saaby.no
+simply_account_name: ""
+simply_api_key: ""
+ingress_lb_ip: "{{ hostvars[groups['k3s_lb'][0]].ansible_host }}"
+platform_dns_ttl: 300
+platform_dns_records:
+  - "{{ argocd_domain }}"
+  - "{{ longhorn_domain }}"
+argocd_domain: argocd.saaby.no
+longhorn_domain: longhorn.saaby.no

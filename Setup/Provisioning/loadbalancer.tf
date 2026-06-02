@@ -23,6 +23,22 @@ resource "hcloud_load_balancer_service" "k3s_api" {
   destination_port = 6443
 }
 
+resource "hcloud_load_balancer_service" "k3s_http" {
+  load_balancer_id = hcloud_load_balancer.k3s_api.id
+
+  protocol         = "tcp"
+  listen_port      = 80
+  destination_port = 80
+}
+
+resource "hcloud_load_balancer_service" "k3s_https" {
+  load_balancer_id = hcloud_load_balancer.k3s_api.id
+
+  protocol         = "tcp"
+  listen_port      = 443
+  destination_port = 443
+}
+
 resource "hcloud_load_balancer_target" "vps_nodes" {
   depends_on = [
     hcloud_load_balancer_network.k3s_lb_network

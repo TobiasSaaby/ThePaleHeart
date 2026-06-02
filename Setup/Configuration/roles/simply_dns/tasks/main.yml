@@ -1,0 +1,34 @@
+---
+- name: Load local bootstrap environment
+  include_tasks: load_env.yml
+
+- name: Require Simply API credentials and ingress LB IP
+  assert:
+    that:
+      - simply_account_name | length > 0
+      - simply_api_key | length > 0
+      - simply_dns_product | length > 0
+      - ingress_lb_ip | length > 0
+    fail_msg: "Set SIMPLY_ACCOUNT_NAME, SIMPLY_API_KEY, SIMPLY_DNS_PRODUCT, and INGRESS_LB_IP or define [k3s_lb]."
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Fetch Simply DNS records
+  uri:
+    url: "{{ simply_api_base_url }}/my/products/{{ simply_dns_product }}/dns/records/"
+    method: GET
+    user: "{{ simply_account_name }}"
+    password: "{{ simply_api_key }}"
+    force_basic_auth: true
+    return_content: true
+  register: simply_dns_records_response
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Reconcile platform DNS records
+  include_tasks: reconcile_record.yml
+  loop: "{{ platform_dns_records }}"
+  loop_control:
+    loop_var: platform_dns_record

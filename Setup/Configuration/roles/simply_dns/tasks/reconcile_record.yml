@@ -1,0 +1,48 @@
+---
+- name: Select existing A records for {{ platform_dns_record }}
+  set_fact:
+    platform_dns_record_name: "{{ platform_dns_record | regex_replace('\\.' ~ simply_dns_product ~ '$', '') }}"
+    existing_platform_a_records: >-
+      {{
+        simply_dns_records_response.json.records
+        | selectattr('type', 'equalto', 'A')
+        | selectattr('name', 'equalto', platform_dns_record | regex_replace('\.' ~ simply_dns_product ~ '$', ''))
+        | list
+      }}
+  delegate_to: localhost
+  run_once: true
+
+- name: Delete non-desired A records for {{ platform_dns_record }}
+  uri:
+    url: "{{ simply_api_base_url }}/my/products/{{ simply_dns_product }}/dns/records/{{ item.record_id }}/"
+    method: DELETE
+    user: "{{ simply_account_name }}"
+    password: "{{ simply_api_key }}"
+    force_basic_auth: true
+    status_code:
+      - 200
+      - 204
+  loop: "{{ existing_platform_a_records | rejectattr('data', 'equalto', ingress_lb_ip) | list }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Create desired A record for {{ platform_dns_record }}
+  uri:
+    url: "{{ simply_api_base_url }}/my/products/{{ simply_dns_product }}/dns/records/"
+    method: POST
+    user: "{{ simply_account_name }}"
+    password: "{{ simply_api_key }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      type: A
+      name: "{{ platform_dns_record }}"
+      data: "{{ ingress_lb_ip }}"
+      ttl: "{{ platform_dns_ttl }}"
+      comment: k3s platform ingress
+    status_code: 200
+  when: existing_platform_a_records | selectattr('data', 'equalto', ingress_lb_ip) | list | length == 0
+  no_log: true
+  delegate_to: localhost
+  run_once: true
