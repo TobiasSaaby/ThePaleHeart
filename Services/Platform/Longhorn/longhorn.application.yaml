@@ -16,7 +16,7 @@ spec:
       valuesObject:
         persistence:
           defaultClass: true
-          defaultClassReplicaCount: 3
+          defaultClassReplicaCount: 2
         defaultSettings:
           defaultDataPath: /var/lib/longhorn
           replicaAutoBalance: best-effort

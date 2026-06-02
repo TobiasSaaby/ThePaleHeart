@@ -6,6 +6,20 @@
     - overlay
     - br_netfilter
 
+- name: Install Longhorn host dependencies
+  apt:
+    name:
+      - open-iscsi
+      - nfs-common
+    state: present
+    update_cache: true
+
+- name: Ensure iSCSI daemon is enabled and running
+  systemd:
+    name: iscsid
+    enabled: true
+    state: started
+
 - name: Persist kernel modules
   copy:
     dest: /etc/modules-load.d/k8s.conf

@@ -33,5 +33,5 @@ simply_dns_webhook_application_manifest: "{{ gitops_services_path_local }}/Simpl
 longhorn_namespace: longhorn-system
 longhorn_chart_version: 1.12.0
 longhorn_domain: longhorn.saaby.no
-longhorn_default_replica_count: 3
+longhorn_default_replica_count: 2
 longhorn_application_manifest: "{{ gitops_services_path_local }}/Longhorn/longhorn.application.yaml"
