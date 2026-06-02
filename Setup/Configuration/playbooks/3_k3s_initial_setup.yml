@@ -5,7 +5,10 @@
   vars:
     k3s_iface: enp7s0
     k3s_config_dir: /etc/rancher/k3s
-    api_domain: "{{ lookup('env', 'K3S_API_DOMAIN') | default('k3s.local', true) }}"
+    bootstrap_env_file: "{{ playbook_dir }}/../.env"
+    bootstrap_env_lines: "{{ lookup('file', bootstrap_env_file, errors='ignore').splitlines() }}"
+    simply_domain: "{{ ((bootstrap_env_lines | select('match', '^SIMPLY_DOMAIN=') | list | first | default('SIMPLY_DOMAIN=local')).split('=', 1))[1] }}"
+    api_domain: "k3s.{{ simply_domain }}"
 
   roles:
     - k3s_server

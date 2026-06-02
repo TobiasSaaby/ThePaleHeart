@@ -28,7 +28,14 @@
   set_fact:
     simply_account_name: "{{ bootstrap_env.SIMPLY_ACCOUNT_NAME | default(simply_account_name) }}"
     simply_api_key: "{{ bootstrap_env.SIMPLY_API_KEY | default(simply_api_key) }}"
-    longhorn_domain: "{{ bootstrap_env.LONGHORN_DOMAIN | default(longhorn_domain) }}"
+    simply_domain: "{{ bootstrap_env.SIMPLY_DOMAIN | default(simply_domain) }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Derive local bootstrap domains
+  set_fact:
+    longhorn_domain: "longhorn.{{ simply_domain }}"
   no_log: true
   delegate_to: localhost
   run_once: true

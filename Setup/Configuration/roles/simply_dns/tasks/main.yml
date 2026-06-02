@@ -9,7 +9,7 @@
       - simply_api_key | length > 0
       - simply_dns_product | length > 0
       - ingress_lb_ip | length > 0
-    fail_msg: "Set SIMPLY_ACCOUNT_NAME, SIMPLY_API_KEY, SIMPLY_DNS_PRODUCT, and INGRESS_LB_IP or define [k3s_lb]."
+    fail_msg: "Set SIMPLY_ACCOUNT_NAME, SIMPLY_API_KEY, SIMPLY_DOMAIN, and define [k3s_lb] in inventory."
   no_log: true
   delegate_to: localhost
   run_once: true

@@ -28,10 +28,16 @@
   set_fact:
     simply_account_name: "{{ bootstrap_env.SIMPLY_ACCOUNT_NAME | default(simply_account_name) }}"
     simply_api_key: "{{ bootstrap_env.SIMPLY_API_KEY | default(simply_api_key) }}"
-    simply_dns_product: "{{ bootstrap_env.SIMPLY_DNS_PRODUCT | default(simply_dns_product) }}"
-    ingress_lb_ip: "{{ bootstrap_env.INGRESS_LB_IP | default(ingress_lb_ip) }}"
-    argocd_domain: "{{ bootstrap_env.ARGOCD_DOMAIN | default(argocd_domain) }}"
-    longhorn_domain: "{{ bootstrap_env.LONGHORN_DOMAIN | default(longhorn_domain) }}"
+    simply_domain: "{{ bootstrap_env.SIMPLY_DOMAIN | default(simply_domain) }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Derive platform DNS values
+  set_fact:
+    simply_dns_product: "{{ simply_domain }}"
+    argocd_domain: "argocd.{{ simply_domain }}"
+    longhorn_domain: "longhorn.{{ simply_domain }}"
   no_log: true
   delegate_to: localhost
   run_once: true

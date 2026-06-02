@@ -26,12 +26,13 @@ cert_manager_issuers_application_manifest: "{{ gitops_services_path_local }}/Cer
 
 simply_dns_webhook_chart_version: 1.9.0
 simply_credentials_secret_name: simply-credentials
+simply_domain: saaby.no
 simply_account_name: ""
 simply_api_key: ""
 simply_dns_webhook_application_manifest: "{{ gitops_services_path_local }}/SimplyDNSWebhook/simply-dns-webhook.application.yaml"
 
 longhorn_namespace: longhorn-system
 longhorn_chart_version: 1.12.0
-longhorn_domain: longhorn.saaby.no
+longhorn_domain: "longhorn.{{ simply_domain }}"
 longhorn_default_replica_count: 2
 longhorn_application_manifest: "{{ gitops_services_path_local }}/Longhorn/longhorn.application.yaml"
