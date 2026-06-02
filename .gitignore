@@ -1,0 +1,21 @@
+# Env files (anywhere in repo)
+.env
+.env.*
+*.env
+.venv/
+!Setup/Configuration/.env.example
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+inventory.ini
