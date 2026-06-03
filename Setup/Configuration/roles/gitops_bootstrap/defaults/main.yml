@@ -26,7 +26,7 @@ cert_manager_issuers_application_manifest: "{{ gitops_services_path_local }}/Cer
 
 simply_dns_webhook_chart_version: 1.9.0
 simply_credentials_secret_name: simply-credentials
-simply_domain: saaby.no
+simply_domain: example.com
 simply_account_name: ""
 simply_api_key: ""
 simply_dns_webhook_application_manifest: "{{ gitops_services_path_local }}/SimplyDNSWebhook/simply-dns-webhook.application.yaml"

@@ -1,7 +1,7 @@
 ---
 bootstrap_env_file: "{{ playbook_dir }}/../.env"
 simply_api_base_url: https://api.simply.com/2
-simply_domain: saaby.no
+simply_domain: example.com
 simply_dns_product: "{{ simply_domain }}"
 simply_account_name: ""
 simply_api_key: ""

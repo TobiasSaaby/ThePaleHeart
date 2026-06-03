@@ -1,8 +1,0 @@
-- hosts: k3s_servers
-  gather_facts: false
-
-  tasks:
-    - name: Bootstrap cert-manager
-      include_role:
-        name: gitops_bootstrap
-        tasks_from: cert_manager
