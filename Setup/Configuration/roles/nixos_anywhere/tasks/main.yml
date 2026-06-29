@@ -1,0 +1,178 @@
+---
+- name: Check nix command on control host
+  command: nix --version
+  changed_when: false
+  delegate_to: localhost
+  run_once: true
+
+- name: Read local SSH public key
+  set_fact:
+    nixos_ssh_public_key: "{{ lookup('file', nixos_ssh_public_key_path) }}"
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Generate ignored NixOS authorized keys module
+  copy:
+    dest: "{{ nixos_generated_authorized_keys_file }}"
+    mode: "0600"
+    content: |
+      { ... }: {
+        users.users.root.openssh.authorizedKeys.keys = [
+          "{{ nixos_ssh_public_key }}"
+        ];
+      }
+  no_log: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Wait for development host SSH
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 22
+    timeout: 300
+  delegate_to: localhost
+
+- name: Install NixOS with nixos-anywhere
+  command: >
+    nix run github:nix-community/nixos-anywhere --
+    --flake {{ nixos_flake_path }}#{{ nixos_host }}
+    --disk main {{ nixos_disk }}
+    --target-host {{ ansible_user | default('root') }}@{{ ansible_host }}
+    {{ nixos_anywhere_extra_args }}
+  environment:
+    NIX_CONFIG: "experimental-features = nix-command flakes"
+  delegate_to: localhost
+
+- name: Wait for NixOS SSH after reboot
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 22
+    delay: 10
+    timeout: 600
+  delegate_to: localhost
+
+- name: Verify NixOS host
+  command: "ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }} nixos-version"
+  changed_when: false
+  delegate_to: localhost
+
+- name: Check for local Hermes environment file
+  stat:
+    path: "{{ hermes_env_file }}"
+  register: hermes_env_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Copy Hermes environment file
+  command: >
+    scp -o StrictHostKeyChecking=accept-new
+    {{ hermes_env_file }}
+    {{ ansible_user | default('root') }}@{{ ansible_host }}:{{ hermes_remote_env_file }}
+  when: hermes_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Secure Hermes environment file and restart Hermes
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    chown hermes:hermes {{ hermes_remote_env_file }} && chmod 0600 {{ hermes_remote_env_file }} && systemctl restart hermes-agent
+  when: hermes_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Check for local Failsafe kubeconfig
+  stat:
+    path: "{{ failsafe_kubeconfig_file }}"
+  register: failsafe_kubeconfig_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Check for local Failsafe Hetzner environment
+  stat:
+    path: "{{ failsafe_hcloud_env_file }}"
+  register: failsafe_hcloud_env_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Prepare Failsafe credential directories
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    mkdir -p /root/.kube /root/.config/the-pale-heart
+  when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Copy Failsafe kubeconfig
+  command: >
+    scp -o StrictHostKeyChecking=accept-new
+    {{ failsafe_kubeconfig_file }}
+    {{ ansible_user | default('root') }}@{{ ansible_host }}:{{ failsafe_remote_kubeconfig_file }}
+  when: failsafe_kubeconfig_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Copy Failsafe Hetzner environment
+  command: >
+    scp -o StrictHostKeyChecking=accept-new
+    {{ failsafe_hcloud_env_file }}
+    {{ ansible_user | default('root') }}@{{ ansible_host }}:{{ failsafe_remote_hcloud_env_file }}
+  when: failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Secure Failsafe credentials
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    chmod 0600 {{ failsafe_remote_kubeconfig_file }} {{ failsafe_remote_hcloud_env_file }} 2>/dev/null || true
+  when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Check for local Failsafe kubeconfig
+  stat:
+    path: "{{ failsafe_kubeconfig_file }}"
+  register: failsafe_kubeconfig_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Check for local Failsafe Hetzner environment
+  stat:
+    path: "{{ failsafe_hcloud_env_file }}"
+  register: failsafe_hcloud_env_file_stat
+  delegate_to: localhost
+  run_once: true
+
+- name: Prepare Failsafe credential directories
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    mkdir -p /root/.kube /root/.config/the-pale-heart
+  when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Copy Failsafe kubeconfig
+  command: >
+    scp -o StrictHostKeyChecking=accept-new
+    {{ failsafe_kubeconfig_file }}
+    {{ ansible_user | default('root') }}@{{ ansible_host }}:{{ failsafe_remote_kubeconfig_file }}
+  when: failsafe_kubeconfig_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Copy Failsafe Hetzner environment
+  command: >
+    scp -o StrictHostKeyChecking=accept-new
+    {{ failsafe_hcloud_env_file }}
+    {{ ansible_user | default('root') }}@{{ ansible_host }}:{{ failsafe_remote_hcloud_env_file }}
+  when: failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost
+
+- name: Secure Failsafe credentials
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    chmod 0600 {{ failsafe_remote_kubeconfig_file }} {{ failsafe_remote_hcloud_env_file }} 2>/dev/null || true
+  when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
+  no_log: true
+  delegate_to: localhost

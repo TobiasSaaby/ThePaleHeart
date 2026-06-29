@@ -1,0 +1,13 @@
+---
+nixos_anywhere_extra_args: ""
+nixos_flake_path: ../../Setup/NixOS
+nixos_host: failsafe
+nixos_disk: /dev/sda
+nixos_ssh_public_key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519.pub"
+nixos_generated_authorized_keys_file: "{{ playbook_dir }}/../../NixOS/hosts/{{ nixos_host }}/authorized-keys.nix"
+hermes_env_file: "{{ playbook_dir }}/../hermes.env"
+hermes_remote_env_file: /var/lib/hermes/env
+failsafe_kubeconfig_file: "{{ playbook_dir }}/../failsafe/kubeconfig"
+failsafe_hcloud_env_file: "{{ playbook_dir }}/../failsafe/hcloud.env"
+failsafe_remote_kubeconfig_file: /root/.kube/config
+failsafe_remote_hcloud_env_file: /root/.config/the-pale-heart/hcloud.env

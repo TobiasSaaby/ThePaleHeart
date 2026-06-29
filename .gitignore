@@ -24,3 +24,4 @@ override.tf.json
 inventory.ini
 Setup/Configuration/inventory/*.ini
 !Setup/Configuration/inventory/*.example.ini
+Setup/Configuration/failsafe/kubeconfig

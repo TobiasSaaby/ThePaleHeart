@@ -1,0 +1,5 @@
+- hosts: development
+  gather_facts: false
+
+  roles:
+    - nixos_anywhere
