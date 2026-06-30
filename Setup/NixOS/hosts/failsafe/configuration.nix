@@ -1,9 +1,9 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
     ./hardware-configuration.nix
-  ] ++ lib.optional (builtins.pathExists ./authorized-keys.nix) ./authorized-keys.nix;
+  ];
 
   networking.hostName = "failsafe";
 

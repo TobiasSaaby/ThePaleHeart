@@ -25,3 +25,4 @@ inventory.ini
 Setup/Configuration/inventory/*.ini
 !Setup/Configuration/inventory/*.example.ini
 Setup/Configuration/failsafe/kubeconfig
+Setup/Configuration/.nixos-anywhere-extra-files/

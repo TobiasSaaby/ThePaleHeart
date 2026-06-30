@@ -1,10 +1,10 @@
 ---
 nixos_anywhere_extra_args: ""
-nixos_flake_path: ../../Setup/NixOS
+nixos_flake_path: ../../NixOS
 nixos_host: failsafe
 nixos_disk: /dev/sda
 nixos_ssh_public_key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519.pub"
-nixos_generated_authorized_keys_file: "{{ playbook_dir }}/../../NixOS/hosts/{{ nixos_host }}/authorized-keys.nix"
+nixos_extra_files_dir: "{{ playbook_dir }}/../.nixos-anywhere-extra-files/{{ nixos_host }}"
 hermes_env_file: "{{ playbook_dir }}/../hermes.env"
 hermes_remote_env_file: /var/lib/hermes/env
 failsafe_kubeconfig_file: "{{ playbook_dir }}/../failsafe/kubeconfig"
