@@ -5,6 +5,7 @@ let
     name = "tph-nixos-sync";
     runtimeInputs = with pkgs; [
       git
+      gh
       nix
       nixos-rebuild
     ];
@@ -47,6 +48,41 @@ let
       git push origin "$branch"
     '';
   };
+
+  tphFailsafeAuth = pkgs.writeShellApplication {
+    name = "tph-failsafe-auth";
+    runtimeInputs = with pkgs; [
+      gh
+      git
+    ];
+    text = ''
+      set -euo pipefail
+
+      export HERMES_HOME=/var/lib/hermes/.hermes
+      repo="''${1:-/workspace/ThePaleHeart}"
+
+      cd "$repo"
+
+      echo "Authenticating GitHub for the failsafe user..."
+      if ! gh auth status --hostname github.com >/dev/null 2>&1; then
+        gh auth login --hostname github.com --git-protocol ssh --web
+      fi
+      gh auth setup-git --hostname github.com
+
+      git remote set-url origin https://github.com/TobiasSaaby/ThePaleHeart.git
+      git remote set-url --push origin git@github.com:TobiasSaaby/ThePaleHeart.git
+
+      echo
+      echo "Starting Hermes interactive setup. Use the ChatGPT/portal option when prompted."
+      echo "Hermes state will be written to $HERMES_HOME and reused by the systemd service."
+      hermes setup
+
+      echo
+      echo "Restarting hermes-agent..."
+      /run/wrappers/bin/sudo ${pkgs.systemd}/bin/systemctl restart hermes-agent
+      ${pkgs.systemd}/bin/systemctl --no-pager --full status hermes-agent || true
+    '';
+  };
 in
 {
   imports = [
@@ -86,6 +122,7 @@ in
     extraPackages = with pkgs; [
       ansible
       docker
+      gh
       git
       jq
       kubectl
@@ -117,6 +154,7 @@ in
     direnv
     docker-compose
     fd
+    gh
     git
     jq
     k9s
@@ -126,6 +164,7 @@ in
     opentofu
     pnpm
     ripgrep
+    tphFailsafeAuth
     tphNixosSync
     tmux
     vim

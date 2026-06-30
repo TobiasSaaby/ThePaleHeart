@@ -20,3 +20,15 @@ That command pulls with fast-forward only, validates the NixOS flake, switches
 the host, commits `Setup/NixOS`, and pushes the current branch. The VPS still
 needs Git push credentials, for example a deploy key that can write to the
 repository.
+
+Run this once after a fresh install to authenticate GitHub and configure Hermes
+interactively:
+
+```sh
+sudo -u failsafe -H tph-failsafe-auth
+```
+
+Choose the ChatGPT/portal login path in the Hermes setup flow if you want to
+use an existing ChatGPT subscription instead of API keys. The generated Hermes
+auth state lives in `/var/lib/hermes/.hermes` and is reused by the native
+`hermes-agent` systemd service.
