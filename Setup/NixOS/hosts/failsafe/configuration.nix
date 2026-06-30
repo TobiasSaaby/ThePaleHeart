@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   tphNixosSync = pkgs.writeShellApplication {
@@ -143,8 +143,20 @@ in
     };
   };
 
-  systemd.services.hermes-agent.environment = {
-    KUBECONFIG = "/var/lib/hermes/kube/config";
+  systemd.services.hermes-agent = {
+    environment = {
+      KUBECONFIG = "/var/lib/hermes/kube/config";
+    };
+
+    serviceConfig = {
+      # The Hermes service uses ProtectSystem=strict, which remounts most of
+      # the host filesystem read-only inside the service sandbox. The project
+      # checkout intentionally lives under /workspace, so explicitly allow the
+      # agent to write there while keeping the rest of the sandbox intact.
+      ReadWritePaths = lib.mkAfter [
+        "/workspace"
+      ];
+    };
   };
 
   environment.systemPackages = with pkgs; [
