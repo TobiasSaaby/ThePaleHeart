@@ -11,3 +11,7 @@ failsafe_kubeconfig_file: "{{ playbook_dir }}/../failsafe/kubeconfig"
 failsafe_hcloud_env_file: "{{ playbook_dir }}/../failsafe/hcloud.env"
 failsafe_remote_kubeconfig_file: /var/lib/hermes/kube/config
 failsafe_remote_hcloud_env_file: /var/lib/hermes/hcloud.env
+failsafe_repository_url: https://github.com/TobiasSaaby/ThePaleHeart.git
+failsafe_repository_push_url: git@github.com:TobiasSaaby/ThePaleHeart.git
+failsafe_repository_dest: /workspace/ThePaleHeart
+failsafe_repository_branch: main

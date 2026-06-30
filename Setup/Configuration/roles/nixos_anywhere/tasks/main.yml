@@ -61,6 +61,25 @@
   changed_when: false
   delegate_to: localhost
 
+- name: Ensure Failsafe repository checkout
+  command: >
+    ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
+    'set -e;
+    mkdir -p "$(dirname {{ failsafe_repository_dest }})";
+    if [ -d {{ failsafe_repository_dest }}/.git ]; then
+      git -C {{ failsafe_repository_dest }} remote set-url origin {{ failsafe_repository_url }};
+      git -C {{ failsafe_repository_dest }} remote set-url --push origin {{ failsafe_repository_push_url }};
+      git -C {{ failsafe_repository_dest }} fetch --prune origin;
+      git -C {{ failsafe_repository_dest }} checkout {{ failsafe_repository_branch }};
+      git -C {{ failsafe_repository_dest }} pull --ff-only origin {{ failsafe_repository_branch }};
+    else
+      rm -rf {{ failsafe_repository_dest }};
+      git clone --branch {{ failsafe_repository_branch }} {{ failsafe_repository_url }} {{ failsafe_repository_dest }};
+      git -C {{ failsafe_repository_dest }} remote set-url --push origin {{ failsafe_repository_push_url }};
+    fi;
+    chown -R hermes:hermes "$(dirname {{ failsafe_repository_dest }})"'
+  delegate_to: localhost
+
 - name: Check for local Hermes environment file
   stat:
     path: "{{ hermes_env_file }}"
