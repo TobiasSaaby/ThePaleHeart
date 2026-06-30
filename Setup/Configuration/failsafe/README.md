@@ -1,6 +1,8 @@
 # Failsafe Local Credentials
 
 Files in this directory are local-only handoff inputs for the development VPS.
+See `CONTEXT.md` for the operational context Failsafe should receive when it
+starts working from the VPS.
 
 - `kubeconfig` is copied to `/var/lib/hermes/kube/config`.
 - `hcloud.env` is copied to `/var/lib/hermes/hcloud.env`.

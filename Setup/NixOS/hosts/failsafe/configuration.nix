@@ -190,7 +190,7 @@ in
       users = [ "failsafe" ];
       commands = [
         {
-          command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
+          command = "ALL";
           options = [ "NOPASSWD" ];
         }
       ];
