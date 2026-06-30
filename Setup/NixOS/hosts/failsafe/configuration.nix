@@ -133,7 +133,7 @@ in
       ripgrep
     ];
     settings = {
-      model.default = "anthropic/claude-sonnet-4";
+      model.default = "openai-codex/gpt-5.5";
       toolsets = [ "all" ];
       terminal = {
         backend = "local";
