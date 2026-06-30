@@ -103,7 +103,10 @@
 - name: Prepare Failsafe credential directories
   command: >
     ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
-    mkdir -p /root/.kube /root/.config/the-pale-heart
+    'mkdir -p /var/lib/hermes/kube &&
+    chown hermes:hermes /var/lib/hermes /var/lib/hermes/kube &&
+    chmod 0750 /var/lib/hermes &&
+    chmod 0700 /var/lib/hermes/kube'
   when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
   no_log: true
   delegate_to: localhost
@@ -129,7 +132,8 @@
 - name: Secure Failsafe credentials
   command: >
     ssh -o StrictHostKeyChecking=accept-new {{ ansible_user | default('root') }}@{{ ansible_host }}
-    chmod 0600 {{ failsafe_remote_kubeconfig_file }} {{ failsafe_remote_hcloud_env_file }} 2>/dev/null || true
+    'chown hermes:hermes {{ failsafe_remote_kubeconfig_file }} {{ failsafe_remote_hcloud_env_file }} 2>/dev/null || true;
+    chmod 0600 {{ failsafe_remote_kubeconfig_file }} {{ failsafe_remote_hcloud_env_file }} 2>/dev/null || true'
   when: failsafe_kubeconfig_file_stat.stat.exists or failsafe_hcloud_env_file_stat.stat.exists
   no_log: true
   delegate_to: localhost

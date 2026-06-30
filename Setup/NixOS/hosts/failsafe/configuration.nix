@@ -24,15 +24,11 @@
 
   services.hermes-agent = {
     enable = true;
-    container.enable = true;
-    container.backend = "docker";
-    container.hostUsers = [ "root" ];
-    container.extraVolumes = [
-      "/workspace:/workspace:rw"
-    ];
+    container.enable = false;
     addToSystemPackages = true;
     environmentFiles = [
       "/var/lib/hermes/env"
+      "/var/lib/hermes/hcloud.env"
     ];
     extraDependencyGroups = [
       "messaging"
@@ -60,6 +56,10 @@
     };
   };
 
+  systemd.services.hermes-agent.environment = {
+    KUBECONFIG = "/var/lib/hermes/kube/config";
+  };
+
   environment.systemPackages = with pkgs; [
     ansible
     bun
@@ -84,7 +84,9 @@
   systemd.tmpfiles.rules = [
     "d /workspace 0750 hermes hermes -"
     "d /var/lib/hermes 0750 hermes hermes -"
+    "d /var/lib/hermes/kube 0700 hermes hermes -"
     "f /var/lib/hermes/env 0600 hermes hermes -"
+    "f /var/lib/hermes/hcloud.env 0600 hermes hermes -"
   ];
 
   networking.firewall.allowedTCPPorts = [
