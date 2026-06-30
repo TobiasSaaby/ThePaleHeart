@@ -149,6 +149,8 @@ in
     };
 
     serviceConfig = {
+      NoNewPrivileges = lib.mkForce false;
+
       # The Hermes service uses ProtectSystem=strict, which remounts most of
       # the host filesystem read-only inside the service sandbox. The project
       # checkout intentionally lives under /workspace, so explicitly allow the
