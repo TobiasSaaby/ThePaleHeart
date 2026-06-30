@@ -65,12 +65,12 @@ let
 
       echo "Authenticating GitHub for the failsafe user..."
       if ! gh auth status --hostname github.com >/dev/null 2>&1; then
-        gh auth login --hostname github.com --git-protocol ssh --web
+        gh auth login --hostname github.com --git-protocol https --skip-ssh-key --web
       fi
       gh auth setup-git --hostname github.com
 
       git remote set-url origin https://github.com/TobiasSaaby/ThePaleHeart.git
-      git remote set-url --push origin git@github.com:TobiasSaaby/ThePaleHeart.git
+      git remote set-url --push origin https://github.com/TobiasSaaby/ThePaleHeart.git
 
       echo
       echo "Starting Hermes interactive setup. Use the ChatGPT/portal option when prompted."

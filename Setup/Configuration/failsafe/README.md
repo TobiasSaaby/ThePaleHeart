@@ -32,3 +32,6 @@ Choose the ChatGPT/portal login path in the Hermes setup flow if you want to
 use an existing ChatGPT subscription instead of API keys. The generated Hermes
 auth state lives in `/var/lib/hermes/.hermes` and is reused by the native
 `hermes-agent` systemd service.
+
+GitHub is configured through `gh auth login` and HTTPS Git credentials, so no
+personal SSH key needs to be copied to the VPS.
