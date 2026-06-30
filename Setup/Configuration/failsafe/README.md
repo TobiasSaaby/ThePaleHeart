@@ -9,7 +9,7 @@ Both files are ignored by Git. Prefer limited-scope credentials here instead of
 full admin tokens.
 
 The Failsafe install also creates `/workspace/ThePaleHeart` on the VPS and
-sets it up as a Git checkout owned by the `hermes` user. Use
+sets it up as a Git checkout owned by the `failsafe` user. Use
 `tph-nixos-sync` from that checkout after editing `Setup/NixOS` on the VPS:
 
 ```sh

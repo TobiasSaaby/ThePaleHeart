@@ -73,6 +73,8 @@ in
   services.hermes-agent = {
     enable = true;
     container.enable = false;
+    user = "failsafe";
+    group = "failsafe";
     addToSystemPackages = true;
     environmentFiles = [
       "/var/lib/hermes/env"
@@ -138,15 +140,15 @@ in
       safe.directory = [
         "/workspace/ThePaleHeart"
       ];
-      user.name = "Failsafe Hermes";
-      user.email = "failsafe-hermes@users.noreply.github.com";
+      user.name = "Failsafe";
+      user.email = "failsafe@users.noreply.github.com";
     };
   };
 
   security.sudo.enable = true;
   security.sudo.extraRules = [
     {
-      users = [ "hermes" ];
+      users = [ "failsafe" ];
       commands = [
         {
           command = "${pkgs.nixos-rebuild}/bin/nixos-rebuild";
@@ -157,11 +159,11 @@ in
   ];
 
   systemd.tmpfiles.rules = [
-    "d /workspace 0750 hermes hermes -"
-    "d /var/lib/hermes 0750 hermes hermes -"
-    "d /var/lib/hermes/kube 0700 hermes hermes -"
-    "f /var/lib/hermes/env 0600 hermes hermes -"
-    "f /var/lib/hermes/hcloud.env 0600 hermes hermes -"
+    "d /workspace 0750 failsafe failsafe -"
+    "d /var/lib/hermes 0750 failsafe failsafe -"
+    "d /var/lib/hermes/kube 0700 failsafe failsafe -"
+    "f /var/lib/hermes/env 0600 failsafe failsafe -"
+    "f /var/lib/hermes/hcloud.env 0600 failsafe failsafe -"
   ];
 
   networking.firewall.allowedTCPPorts = [
