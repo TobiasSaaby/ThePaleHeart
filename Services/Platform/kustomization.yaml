@@ -6,3 +6,5 @@ resources:
   - CertManager/cert-manager-issuers.application.yaml
   - SimplyDNSWebhook/simply-dns-webhook.application.yaml
   - Longhorn/longhorn.application.yaml
+  - Woodpecker/woodpecker.application.yaml
+  - Dionysus/dionysus.application.yaml

@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: woodpecker
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: default
+  source:
+    repoURL: https://woodpecker-ci.org/
+    chart: woodpecker
+    targetRevision: 3.6.5
+    helm:
+      releaseName: woodpecker
+      valuesObject:
+        server:
+          env:
+            WOODPECKER_ADMIN: TobiasSaaby
+            WOODPECKER_HOST: https://woodpecker.saaby.no
+            WOODPECKER_GITHUB: "true"
+            WOODPECKER_OPEN: "true"
+          createAgentSecret: false
+          extraSecretNamesForEnvFrom:
+            - woodpecker-agent-secret
+            - woodpecker-github-oauth
+          persistentVolume:
+            enabled: true
+            size: 10Gi
+            storageClass: longhorn
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt-prod
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+            hosts:
+              - host: woodpecker.saaby.no
+                paths:
+                  - path: /
+                    backend:
+                      serviceName: woodpecker-server
+                      servicePort: 80
+            tls:
+              - secretName: woodpecker-server-tls
+                hosts:
+                  - woodpecker.saaby.no
+        agent:
+          replicaCount: 2
+          env:
+            WOODPECKER_SERVER: woodpecker-server:9000
+            WOODPECKER_BACKEND: kubernetes
+            WOODPECKER_BACKEND_K8S_NAMESPACE: woodpecker
+            WOODPECKER_BACKEND_K8S_NAMESPACE_PER_ORGANIZATION: "false"
+            WOODPECKER_BACKEND_K8S_STORAGE_CLASS: longhorn
+            WOODPECKER_BACKEND_K8S_VOLUME_SIZE: 10G
+            WOODPECKER_BACKEND_K8S_STORAGE_RWX: "true"
+            WOODPECKER_CONNECT_RETRY_COUNT: "3"
+          extraSecretNamesForEnvFrom:
+            - woodpecker-agent-secret
+          persistence:
+            enabled: true
+            size: 1Gi
+            storageClass: longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: woodpecker
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

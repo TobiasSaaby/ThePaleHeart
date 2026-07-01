@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dionysus
+  namespace: dionysus
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: dionysus-web-tls
+      hosts:
+        - dionysus.saaby.no
+    - secretName: dionysus-api-tls
+      hosts:
+        - api.dionysus.saaby.no
+  rules:
+    - host: dionysus.saaby.no
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dionysus-web
+                port:
+                  name: http
+    - host: api.dionysus.saaby.no
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dionysus-api
+                port:
+                  name: http

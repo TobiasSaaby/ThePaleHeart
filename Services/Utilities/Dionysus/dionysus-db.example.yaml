@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dionysus-db
+  namespace: dionysus
+type: Opaque
+stringData:
+  POSTGRES_DB: dionysus
+  POSTGRES_USER: dionysus
+  POSTGRES_PASSWORD: <replace-me>
+  DATABASE_URL: postgresql+psycopg://dionysus:<replace-me>@dionysus-postgres:5432/dionysus
