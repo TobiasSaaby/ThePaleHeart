@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: docker.io/tobiassaaby/dionysus-api:6bca679551d8de4f75ab5da60c8d7194920a3970
+          image: docker.io/tobiassaaby/dionysus-api:bd04a18fddf08426db26c889a089c33a75426ce1
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
