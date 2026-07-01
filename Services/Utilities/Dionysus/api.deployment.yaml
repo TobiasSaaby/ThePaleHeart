@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/tobiassaaby/dionysus-api:main
+          image: docker.io/tobiassaaby/dionysus-api:main
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL

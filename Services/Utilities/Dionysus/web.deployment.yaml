@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/tobiassaaby/dionysus-web:main
+          image: docker.io/tobiassaaby/dionysus-web:main
           imagePullPolicy: Always
           ports:
             - name: http

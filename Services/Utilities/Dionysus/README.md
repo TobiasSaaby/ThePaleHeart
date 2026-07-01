@@ -22,9 +22,12 @@ kubectl -n dionysus create secret generic dionysus-db \
 
 The workloads expect these images:
 
-- `ghcr.io/tobiassaaby/dionysus-api:main`
-- `ghcr.io/tobiassaaby/dionysus-web:main`
+- `docker.io/tobiassaaby/dionysus-api:main`
+- `docker.io/tobiassaaby/dionysus-web:main`
 
 The Dionysus repository contains a Woodpecker pipeline that builds and pushes
-those images once Woodpecker is connected to GitHub and has a
-`github_packages_token` secret with package write permissions.
+those images to Docker Hub once Woodpecker is connected to GitHub and has these
+repository secrets:
+
+- `dockerhub_username`
+- `dockerhub_token`
