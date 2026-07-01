@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: docker.io/tobiassaaby/dionysus-web:bd04a18fddf08426db26c889a089c33a75426ce1
+          image: docker.io/tobiassaaby/dionysus-web:9926916085d565abbededae11101ed0928087323
           imagePullPolicy: Always
           ports:
             - name: http
