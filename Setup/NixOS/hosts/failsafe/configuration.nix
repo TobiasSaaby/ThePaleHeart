@@ -133,7 +133,10 @@ in
       ripgrep
     ];
     settings = {
-      model.default = "openai-codex/gpt-5.5";
+      model = {
+        default = "openai-codex/gpt-5.5";
+        provider = "openai-codex";
+      };
       toolsets = [ "all" ];
       terminal = {
         backend = "local";
