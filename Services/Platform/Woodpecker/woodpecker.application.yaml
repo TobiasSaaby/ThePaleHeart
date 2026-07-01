@@ -48,6 +48,7 @@ spec:
                   - woodpecker.saaby.no
         agent:
           replicaCount: 2
+          mapAgentSecret: false
           env:
             WOODPECKER_SERVER: woodpecker-server:9000
             WOODPECKER_BACKEND: kubernetes
