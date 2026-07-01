@@ -20,6 +20,7 @@ spec:
             WOODPECKER_HOST: https://woodpecker.saaby.no
             WOODPECKER_GITHUB: "true"
             WOODPECKER_OPEN: "true"
+            WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx,docker.io/woodpeckerci/plugin-docker-buildx
           createAgentSecret: false
           extraSecretNamesForEnvFrom:
             - woodpecker-agent-secret
