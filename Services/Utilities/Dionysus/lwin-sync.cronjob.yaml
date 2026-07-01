@@ -23,7 +23,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: lwin-sync
-              image: docker.io/tobiassaaby/dionysus-api:c7a70554378be2be5a364794c7c4ac1c5d5665e0
+              image: docker.io/tobiassaaby/dionysus-api:b4e91ef961b5079ca29cfbc8ec13565ccdca5480
               imagePullPolicy: Always
               command: ["python", "scripts/sync_lwin_latest.py"]
               env:
