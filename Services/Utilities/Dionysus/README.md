@@ -20,14 +20,20 @@ kubectl -n dionysus create secret generic dionysus-db \
 
 ## Images
 
-The workloads expect these images:
+The workloads are updated through the Dionysus Woodpecker GitOps pipeline.
+Woodpecker builds immutable Docker Hub tags from the Dionysus commit SHA, then
+commits those tags back to these manifests. Argo CD deploys from that Git change.
 
-- `docker.io/tobiassaaby/dionysus-api:main`
-- `docker.io/tobiassaaby/dionysus-web:main`
+Current image fields are intentionally managed by CI:
+
+- `Services/Utilities/Dionysus/api.deployment.yaml`
+- `Services/Utilities/Dionysus/web.deployment.yaml`
 
 The Dionysus repository contains a Woodpecker pipeline that builds and pushes
-those images to Docker Hub once Woodpecker is connected to GitHub and has these
+images to Docker Hub once Woodpecker is connected to GitHub and has these
 repository secrets:
 
 - `dockerhub_username`
 - `dockerhub_token`
+- `gitops_github_token` — GitHub token with permission to push to
+  `TobiasSaaby/ThePaleHeart`
