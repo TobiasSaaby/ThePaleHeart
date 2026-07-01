@@ -5,6 +5,7 @@ resources:
   - postgres.statefulset.yaml
   - postgres.service.yaml
   - api.deployment.yaml
+  - lwin-sync.cronjob.yaml
   - api.service.yaml
   - web.deployment.yaml
   - web.service.yaml
