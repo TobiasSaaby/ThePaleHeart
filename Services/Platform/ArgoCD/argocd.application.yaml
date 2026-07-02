@@ -16,6 +16,9 @@ spec:
       valuesObject:
         global:
           domain: argocd.saaby.no
+          networkPolicy:
+            create: true
+            defaultDenyIngress: true
         configs:
           params:
             server.insecure: true
