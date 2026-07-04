@@ -1,0 +1,2 @@
+resources:
+  - homelab-security-platform.dashboard.configmap.yaml
