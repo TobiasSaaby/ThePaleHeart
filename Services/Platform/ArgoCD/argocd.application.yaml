@@ -23,6 +23,10 @@ spec:
           params:
             server.insecure: true
         server:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
           ingress:
             enabled: true
             ingressClassName: traefik
@@ -36,6 +40,31 @@ spec:
               - secretName: argocd-server-tls
                 hosts:
                   - argocd.saaby.no
+        controller:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        repoServer:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        applicationSet:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        notifications:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+        dex:
+          metrics:
+            enabled: true
+            serviceMonitor:
+              enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
