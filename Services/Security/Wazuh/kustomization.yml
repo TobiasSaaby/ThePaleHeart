@@ -11,6 +11,9 @@ kind: Kustomization
 # Adds wazuh namespace to all resources.
 namespace: wazuh
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 configMapGenerator:
   - name: indexer-conf
     files:
