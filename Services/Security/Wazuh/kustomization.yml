@@ -11,6 +11,19 @@ kind: Kustomization
 # Adds wazuh namespace to all resources.
 namespace: wazuh
 
+configMapGenerator:
+  - name: indexer-conf
+    files:
+      - indexer_stack/wazuh-indexer/indexer_conf/opensearch.yml
+      - indexer_stack/wazuh-indexer/indexer_conf/internal_users.yml
+  - name: wazuh-conf
+    files:
+      - wazuh_managers/wazuh_conf/master.conf
+      - wazuh_managers/wazuh_conf/worker.conf
+  - name: dashboard-conf
+    files:
+      - indexer_stack/wazuh-dashboard/dashboard_conf/opensearch_dashboards.yml
+
 resources:
   - base/wazuh-ns.yaml
 
