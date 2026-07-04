@@ -63,7 +63,7 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 1564Mi
+              memory: 3Gi
           env:
             - name: OPENSEARCH_JAVA_OPTS
               value: '-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true'
@@ -132,4 +132,4 @@ spec:
         storageClassName: longhorn
         resources:
           requests:
-            storage: 500Mi
+            storage: 10Gi

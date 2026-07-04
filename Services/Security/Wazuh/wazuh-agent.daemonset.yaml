@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: wazuh-agent
+  namespace: wazuh
+  labels:
+    app: wazuh-agent
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-agent
+  template:
+    metadata:
+      labels:
+        app: wazuh-agent
+    spec:
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: wazuh-agent
+          image: wazuh/wazuh-agent:4.14.6
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: WAZUH_MANAGER_SERVER
+              value: wazuh-workers.wazuh.svc.cluster.local
+            - name: WAZUH_MANAGER_PORT
+              value: "1514"
+            - name: WAZUH_REGISTRATION_SERVER
+              value: wazuh.wazuh.svc.cluster.local
+            - name: WAZUH_REGISTRATION_PORT
+              value: "1515"
+            - name: WAZUH_REGISTRATION_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-authd-pass
+                  key: authd.pass
+            - name: WAZUH_AGENT_GROUP
+              value: kubernetes
+          volumeMounts:
+            - name: host-var-log
+              mountPath: /host/var/log
+              readOnly: true
+            - name: host-etc
+              mountPath: /host/etc
+              readOnly: true
+            - name: host-proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: host-sys
+              mountPath: /host/sys
+              readOnly: true
+      volumes:
+        - name: host-var-log
+          hostPath:
+            path: /var/log
+        - name: host-etc
+          hostPath:
+            path: /etc
+        - name: host-proc
+          hostPath:
+            path: /proc
+        - name: host-sys
+          hostPath:
+            path: /sys
