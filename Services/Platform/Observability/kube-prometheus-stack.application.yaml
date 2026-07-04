@@ -38,7 +38,6 @@ spec:
                   - grafana.saaby.no
           additionalDataSources:
             - name: Loki
-              uid: loki
               type: loki
               access: proxy
               url: http://loki-gateway.monitoring.svc.cluster.local
