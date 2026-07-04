@@ -41,6 +41,8 @@
     woodpecker_domain: "woodpecker.{{ simply_domain }}"
     dionysus_domain: "dionysus.{{ simply_domain }}"
     dionysus_api_domain: "api.dionysus.{{ simply_domain }}"
+    grafana_domain: "grafana.{{ simply_domain }}"
+    wazuh_domain: "wazuh.{{ simply_domain }}"
   no_log: true
   delegate_to: localhost
   run_once: true

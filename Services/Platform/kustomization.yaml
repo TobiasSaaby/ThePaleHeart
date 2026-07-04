@@ -8,3 +8,9 @@ resources:
   - Longhorn/longhorn.application.yaml
   - Woodpecker/woodpecker.application.yaml
   - Dionysus/dionysus.application.yaml
+  - Observability/kube-prometheus-stack.application.yaml
+  - Observability/loki.application.yaml
+  - Observability/promtail.application.yaml
+  - TrivyOperator/trivy-operator.application.yaml
+  - Falco/falco.application.yaml
+  - Wazuh/wazuh.application.yaml

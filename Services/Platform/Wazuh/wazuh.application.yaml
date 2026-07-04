@@ -1,22 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dionysus
+  name: wazuh
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "9"
 spec:
   project: default
   source:
     repoURL: https://github.com/TobiasSaaby/ThePaleHeart.git
     targetRevision: HEAD
-    path: Services/Utilities/Dionysus
+    path: Services/Security/Wazuh
   destination:
     server: https://kubernetes.default.svc
-    namespace: dionysus
+    namespace: wazuh
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
