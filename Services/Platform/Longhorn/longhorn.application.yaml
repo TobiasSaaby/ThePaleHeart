@@ -20,6 +20,7 @@ spec:
         defaultSettings:
           defaultDataPath: /var/lib/longhorn
           replicaAutoBalance: best-effort
+          storageReservedPercentageForDefaultDisk: 10
         ingress:
           enabled: true
           ingressClassName: traefik
