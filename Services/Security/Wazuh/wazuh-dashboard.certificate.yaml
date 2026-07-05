@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-dashboard-tls
+  namespace: wazuh
+spec:
+  secretName: wazuh-dashboard-tls
+  dnsNames:
+    - wazuh.saaby.no
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
