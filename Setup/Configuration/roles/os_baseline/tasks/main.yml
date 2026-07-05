@@ -58,3 +58,23 @@
     name: iscsid
     enabled: true
     state: started
+
+- name: Ensure multipath does not claim Longhorn block devices
+  copy:
+    dest: /etc/multipath/conf.d/longhorn.conf
+    mode: "0644"
+    content: |
+      blacklist {
+          devnode "^sd[a-z0-9]+"
+      }
+
+- name: Disable multipath daemon for Longhorn nodes
+  systemd:
+    name: "{{ item }}"
+    enabled: false
+    masked: true
+    state: stopped
+  failed_when: false
+  loop:
+    - multipathd
+    - multipathd.socket
