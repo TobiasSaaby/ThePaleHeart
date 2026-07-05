@@ -39,8 +39,6 @@ spec:
                 secretKeyRef:
                   name: wazuh-authd-pass
                   key: authd.pass
-            - name: WAZUH_AGENT_GROUP
-              value: kubernetes
           volumeMounts:
             - name: host-var-log
               mountPath: /host/var/log
