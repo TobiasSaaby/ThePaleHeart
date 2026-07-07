@@ -24,8 +24,15 @@
     <group>auth_bruteforce,</group>
   </rule>
 
+  <rule id="100099" level="0">
+    <if_group>rootcheck</if_group>
+    <field name="file">/dev/termination-log</field>
+    <description>Ignore Kubernetes container termination-log rootcheck noise</description>
+  </rule>
+
   <rule id="100102" level="12">
     <if_group>rootcheck</if_group>
+    <match>File|Port|Process|Trojan|Rootkit|hidden|permission|Possible|Anomaly|detected</match>
     <description>Rootcheck reported a possible host compromise indicator</description>
     <mitre>
       <id>T1014</id>
