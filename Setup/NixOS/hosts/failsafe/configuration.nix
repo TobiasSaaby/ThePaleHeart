@@ -104,6 +104,10 @@ in
     };
   };
 
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINrEfmO8zsf+MPLA2Ei7bPbzxRR+vOVC+2i0bptT0+s6 mdd ss@LSAABDK364"
+  ];
+
   virtualisation.docker.enable = true;
 
   services.hermes-agent = {
