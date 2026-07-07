@@ -24,6 +24,51 @@ spec:
         metrics:
           enabled: true
           outputRule: true
+        customRules:
+          homelab-rules.yaml: |-
+            - rule: Homelab Interactive Shell In Application Container
+              desc: An interactive shell was spawned in a non-platform application container.
+              condition: >
+                spawned_process and container and proc.name in (bash, sh, zsh, fish, ash)
+                and not k8s.ns.name in (kube-system, argocd, monitoring, longhorn-system, falco, wazuh, trivy-system, cert-manager)
+              output: >
+                Interactive shell spawned in application container
+                (user=%user.name command=%proc.cmdline container=%container.name image=%container.image.repository:%container.image.tag pod=%k8s.pod.name ns=%k8s.ns.name)
+              priority: WARNING
+              tags: [container, shell, homelab, mitre_execution]
+
+            - rule: Homelab Package Manager In Application Container
+              desc: Package manager execution inside an application container often indicates live debugging or post-compromise tooling.
+              condition: >
+                spawned_process and container and proc.name in (apk, apt, apt-get, yum, dnf, microdnf, pip, pip3, npm, yarn, pnpm, curl, wget)
+                and not k8s.ns.name in (kube-system, argocd, monitoring, longhorn-system, falco, wazuh, trivy-system, cert-manager)
+              output: >
+                Package/download tool executed in application container
+                (user=%user.name command=%proc.cmdline container=%container.name image=%container.image.repository:%container.image.tag pod=%k8s.pod.name ns=%k8s.ns.name)
+              priority: WARNING
+              tags: [container, package_management, homelab, mitre_execution]
+
+            - rule: Homelab Sensitive Host Path Write From Container
+              desc: Container attempted to write to sensitive host or system paths.
+              condition: >
+                open_write and container and fd.name startswith /host/etc
+                or open_write and container and fd.name startswith /host/boot
+                or open_write and container and fd.name startswith /host/usr/bin
+                or open_write and container and fd.name startswith /host/usr/sbin
+              output: >
+                Sensitive host path write from container
+                (user=%user.name file=%fd.name command=%proc.cmdline container=%container.name pod=%k8s.pod.name ns=%k8s.ns.name)
+              priority: CRITICAL
+              tags: [filesystem, host_path, homelab, mitre_persistence]
+
+            - rule: Homelab Known Miner Process In Container
+              desc: Known crypto-mining process name started inside a container.
+              condition: spawned_process and container and proc.name in (xmrig, minerd, cpuminer, cryptonight, kinsing)
+              output: >
+                Known miner process started in container
+                (user=%user.name command=%proc.cmdline container=%container.name image=%container.image.repository:%container.image.tag pod=%k8s.pod.name ns=%k8s.ns.name)
+              priority: CRITICAL
+              tags: [container, cryptomining, homelab, mitre_impact]
         serviceMonitor:
           create: true
         falcosidekick:

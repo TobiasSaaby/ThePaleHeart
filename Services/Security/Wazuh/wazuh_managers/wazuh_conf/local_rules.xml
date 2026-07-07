@@ -1,0 +1,51 @@
+<!--
+  Homelab-focused Wazuh rules.
+  These enrich existing Wazuh detections into higher-signal groups that are easy
+  to query from Grafana/Loki after the manager alert stream is tailed to stdout.
+-->
+<group name="homelab,kubernetes,syscheck,authentication,">
+  <rule id="100100" level="12">
+    <if_group>syscheck</if_group>
+    <field name="file">/etc/sudoers|/etc/passwd|/etc/shadow|/etc/ssh/sshd_config|/boot/</field>
+    <description>Critical host configuration file changed</description>
+    <mitre>
+      <id>T1070</id>
+      <id>T1098</id>
+    </mitre>
+    <group>host_integrity,critical_file_change,</group>
+  </rule>
+
+  <rule id="100101" level="10" frequency="5" timeframe="300">
+    <if_matched_group>authentication_failed</if_matched_group>
+    <description>Repeated authentication failures on a homelab node</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <group>auth_bruteforce,</group>
+  </rule>
+
+  <rule id="100102" level="12">
+    <if_group>rootcheck</if_group>
+    <description>Rootcheck reported a possible host compromise indicator</description>
+    <mitre>
+      <id>T1014</id>
+    </mitre>
+    <group>rootkit,host_compromise,</group>
+  </rule>
+
+  <rule id="100103" level="9">
+    <if_group>vulnerability-detector</if_group>
+    <field name="vulnerability.severity">Critical|High</field>
+    <description>High or critical vulnerability detected by Wazuh</description>
+    <mitre>
+      <id>T1190</id>
+    </mitre>
+    <group>vulnerability,patching,</group>
+  </rule>
+
+  <rule id="100104" level="8">
+    <if_group>syscollector</if_group>
+    <description>System inventory change detected on a homelab node</description>
+    <group>inventory_change,</group>
+  </rule>
+</group>

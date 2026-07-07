@@ -57,6 +57,10 @@ spec:
               mountPath: /wazuh-config-mount/etc/ossec.conf
               subPath: worker.conf
               readOnly: true
+            - name: config
+              mountPath: /var/ossec/etc/rules/local_rules.xml
+              subPath: local_rules.xml
+              readOnly: true
             - name: filebeat-certs
               mountPath: /etc/ssl/root-ca.pem
               readOnly: true
@@ -133,6 +137,20 @@ spec:
                 secretKeyRef:
                   name: wazuh-cluster-key
                   key: key
+        - name: wazuh-alerts-to-stdout
+          image: busybox:1.36
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -ec
+            - |
+              mkdir -p /var/ossec/logs/alerts
+              touch /var/ossec/logs/alerts/alerts.json
+              tail -n +1 -F /var/ossec/logs/alerts/alerts.json
+          volumeMounts:
+            - name: wazuh-manager-worker
+              mountPath: /var/ossec/logs
+              subPath: wazuh/var/ossec/logs
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-worker
