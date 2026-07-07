@@ -26,7 +26,7 @@ spec:
         app: wazuh-manager
         node-type: worker
       annotations:
-        homelab.saaby.no/wazuh-config-revision: "2026-07-07-security-rules-v3"
+        homelab.saaby.no/wazuh-config-revision: "2026-07-07-indexer-storage-v1"
       name: wazuh-manager-worker
     spec:
       affinity:
@@ -115,7 +115,7 @@ spec:
               name: cluster
           env:
             - name: INDEXER_URL
-              value: 'https://indexer:9200'
+              value: 'https://wazuh-indexer:9200'
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:
