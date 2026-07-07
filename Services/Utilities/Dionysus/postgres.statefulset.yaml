@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: dionysus-postgres
-  namespace: dionysus
   labels:
     app.kubernetes.io/name: dionysus
     app.kubernetes.io/component: postgres

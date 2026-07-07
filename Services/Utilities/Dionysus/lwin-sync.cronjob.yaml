@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: dionysus-lwin-sync
-  namespace: dionysus
   labels:
     app.kubernetes.io/name: dionysus
     app.kubernetes.io/component: lwin-sync
@@ -23,7 +22,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: lwin-sync
-              image: docker.io/tobiassaaby/dionysus-api:2d9fdd1-local
+              image: docker.io/tobiassaaby/dionysus-api
               imagePullPolicy: IfNotPresent
               command: ["python", "scripts/sync_lwin_latest.py"]
               env:

@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: dionysus
 resources:
   - namespace.yaml
   - postgres.statefulset.yaml
@@ -11,3 +12,8 @@ resources:
   - web.deployment.yaml
   - web.service.yaml
   - ingress.yaml
+images:
+  - name: docker.io/tobiassaaby/dionysus-api
+    newTag: 2d9fdd1-local
+  - name: docker.io/tobiassaaby/dionysus-web
+    newTag: 2d9fdd1-local

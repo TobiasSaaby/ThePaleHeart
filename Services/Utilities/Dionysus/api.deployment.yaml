@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dionysus-api
-  namespace: dionysus
   labels:
     app.kubernetes.io/name: dionysus
     app.kubernetes.io/component: api
@@ -21,7 +20,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: docker.io/tobiassaaby/dionysus-api:2d9fdd1-local
+          image: docker.io/tobiassaaby/dionysus-api
           imagePullPolicy: IfNotPresent
           env:
             - name: DATABASE_URL
