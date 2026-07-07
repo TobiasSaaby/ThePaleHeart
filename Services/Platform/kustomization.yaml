@@ -5,9 +5,9 @@ resources:
   - CertManager/cert-manager.application.yaml
   - CertManager/cert-manager-issuers.application.yaml
   - SimplyDNSWebhook/simply-dns-webhook.application.yaml
+  - gitops-applications.applicationset.yaml
   - Longhorn/longhorn.application.yaml
   - Woodpecker/woodpecker.application.yaml
-  - Dionysus/dionysus.application.yaml
   - Observability/kube-prometheus-stack.application.yaml
   - Observability/loki.application.yaml
   - Observability/promtail.application.yaml
