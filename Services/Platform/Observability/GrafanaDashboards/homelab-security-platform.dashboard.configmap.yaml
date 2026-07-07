@@ -250,6 +250,66 @@ data:
               "expr": "{namespace=\"woodpecker\"}"
             }
           ]
+        },
+        {
+          "id": 11,
+          "type": "logs",
+          "title": "Dionysus logs",
+          "gridPos": {
+            "x": 0,
+            "y": 28,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "targets": [
+            {
+              "expr": "{namespace=\"dionysus\"} |~ \"(?i)(error|exception|traceback|warn|failed)\""
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "type": "logs",
+          "title": "Argo CD logs",
+          "gridPos": {
+            "x": 8,
+            "y": 28,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "targets": [
+            {
+              "expr": "{namespace=\"argocd\"} |~ \"(?i)(error|failed|denied|panic|timeout)\""
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "type": "logs",
+          "title": "Longhorn logs",
+          "gridPos": {
+            "x": 16,
+            "y": 28,
+            "w": 8,
+            "h": 8
+          },
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "targets": [
+            {
+              "expr": "{namespace=\"longhorn-system\"} |~ \"(?i)(error|failed|faulted|degraded|timeout)\""
+            }
+          ]
         }
       ]
     }

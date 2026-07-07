@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dionysus-wine-images
+  namespace: dionysus
+  labels:
+    app.kubernetes.io/name: dionysus
+    app.kubernetes.io/component: wine-images
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi

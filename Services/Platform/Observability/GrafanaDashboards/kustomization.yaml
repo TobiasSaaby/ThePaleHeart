@@ -1,2 +1,3 @@
 resources:
   - homelab-security-platform.dashboard.configmap.yaml
+  - homelab-tool-alerts.prometheusrule.yaml
