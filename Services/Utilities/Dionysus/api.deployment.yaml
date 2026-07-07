@@ -29,7 +29,7 @@ spec:
                   name: dionysus-db
                   key: DATABASE_URL
             - name: CORS_ORIGINS
-              value: https://dionysus.saaby.no,http://localhost:5173,http://127.0.0.1:5173
+              value: https://dionysus.saaby.no
             - name: WINE_IMAGE_STORAGE_DIR
               value: /data/wine-images
           ports:
