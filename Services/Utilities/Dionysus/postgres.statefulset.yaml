@@ -18,8 +18,6 @@ spec:
         app.kubernetes.io/name: dionysus
         app.kubernetes.io/component: postgres
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: k3s-srv-2
       containers:
         - name: postgres
           image: postgres:16-alpine
@@ -51,7 +49,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: local-path
+        storageClassName: longhorn
         resources:
           requests:
             storage: 10Gi
