@@ -31,6 +31,8 @@ spec:
                   key: DATABASE_URL
             - name: CORS_ORIGINS
               value: https://dionysus.saaby.no,http://localhost:5173,http://127.0.0.1:5173
+            - name: WINE_IMAGE_STORAGE_DIR
+              value: /data/wine-images
           ports:
             - name: http
               containerPort: 8000
@@ -47,3 +49,10 @@ spec:
               port: http
             initialDelaySeconds: 15
             periodSeconds: 20
+          volumeMounts:
+            - name: wine-images
+              mountPath: /data/wine-images
+      volumes:
+        - name: wine-images
+          persistentVolumeClaim:
+            claimName: dionysus-wine-images

@@ -1,0 +1,124 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: homelab-tool-alerts
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: homelab-tool-alerts
+    app.kubernetes.io/component: observability
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+spec:
+  groups:
+    - name: homelab.tool-health
+      rules:
+        - alert: ArgoCDApplicationUnhealthy
+          expr: max by (name, namespace, health_status, sync_status) (argocd_app_info{health_status!="Healthy"}) > 0
+          for: 10m
+          labels:
+            severity: warning
+            tool: argocd
+          annotations:
+            summary: "Argo CD application {{ $labels.name }} is {{ $labels.health_status }}"
+            description: "Application {{ $labels.namespace }}/{{ $labels.name }} has sync status {{ $labels.sync_status }} and health {{ $labels.health_status }} for more than 10 minutes."
+        - alert: ArgoCDApplicationOutOfSync
+          expr: max by (name, namespace, sync_status) (argocd_app_info{sync_status!="Synced"}) > 0
+          for: 15m
+          labels:
+            severity: warning
+            tool: argocd
+          annotations:
+            summary: "Argo CD application {{ $labels.name }} is {{ $labels.sync_status }}"
+            description: "Application {{ $labels.namespace }}/{{ $labels.name }} has not been Synced for more than 15 minutes."
+        - alert: LonghornVolumeUnhealthy
+          expr: longhorn_volume_robustness != 1
+          for: 10m
+          labels:
+            severity: critical
+            tool: longhorn
+          annotations:
+            summary: "Longhorn volume {{ $labels.volume }} is not healthy"
+            description: "Longhorn reports volume {{ $labels.volume }} robustness as {{ $value }} for more than 10 minutes."
+        - alert: DionysusApiUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="dionysus", deployment="dionysus-api"} < 1
+          for: 5m
+          labels:
+            severity: critical
+            tool: dionysus
+          annotations:
+            summary: "Dionysus API has no available replicas"
+            description: "The dionysus-api Deployment has had fewer than one available replica for more than 5 minutes."
+        - alert: DionysusWebUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="dionysus", deployment="dionysus-web"} < 1
+          for: 5m
+          labels:
+            severity: critical
+            tool: dionysus
+          annotations:
+            summary: "Dionysus web has no available replicas"
+            description: "The dionysus-web Deployment has had fewer than one available replica for more than 5 minutes."
+        - alert: DionysusPersistentVolumeFilling
+          expr: kubelet_volume_stats_used_bytes{namespace="dionysus"} / kubelet_volume_stats_capacity_bytes{namespace="dionysus"} > 0.85
+          for: 15m
+          labels:
+            severity: warning
+            tool: dionysus
+          annotations:
+            summary: "Dionysus PVC {{ $labels.persistentvolumeclaim }} is above 85% used"
+            description: "PVC {{ $labels.namespace }}/{{ $labels.persistentvolumeclaim }} is {{ $value | humanizePercentage }} full."
+        - alert: WazuhManagerUnavailable
+          expr: kube_statefulset_status_replicas_ready{namespace="wazuh", statefulset="wazuh-manager-master"} < 1
+          for: 10m
+          labels:
+            severity: critical
+            tool: wazuh
+          annotations:
+            summary: "Wazuh manager master is unavailable"
+            description: "The Wazuh manager master StatefulSet has had fewer than one ready replica for more than 10 minutes."
+        - alert: FalcoPodsUnavailable
+          expr: kube_daemonset_status_number_ready{namespace="falco", daemonset="falco"} < kube_daemonset_status_desired_number_scheduled{namespace="falco", daemonset="falco"}
+          for: 10m
+          labels:
+            severity: warning
+            tool: falco
+          annotations:
+            summary: "Falco is not ready on every scheduled node"
+            description: "Falco ready pod count is below desired for more than 10 minutes."
+        - alert: TrivyOperatorUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="trivy-system", deployment="trivy-operator"} < 1
+          for: 10m
+          labels:
+            severity: warning
+            tool: trivy
+          annotations:
+            summary: "Trivy Operator is unavailable"
+            description: "The Trivy Operator deployment has no available replicas for more than 10 minutes."
+        - alert: WoodpeckerServerUnavailable
+          expr: kube_deployment_status_replicas_available{namespace="woodpecker", deployment="woodpecker-server"} < 1
+          for: 10m
+          labels:
+            severity: warning
+            tool: woodpecker
+          annotations:
+            summary: "Woodpecker server is unavailable"
+            description: "The Woodpecker server deployment has no available replicas for more than 10 minutes."
+    - name: homelab.workload-logs
+      rules:
+        - alert: ContainerRestartLooping
+          expr: increase(kube_pod_container_status_restarts_total{namespace=~"argocd|cert-manager|dionysus|falco|longhorn-system|monitoring|trivy-system|wazuh|woodpecker"}[15m]) > 3
+          for: 5m
+          labels:
+            severity: warning
+            tool: kubernetes
+          annotations:
+            summary: "{{ $labels.namespace }}/{{ $labels.pod }} is restarting repeatedly"
+            description: "Container {{ $labels.container }} restarted more than 3 times in 15 minutes. Check the Grafana tool log dashboard for pod logs."
+        - alert: PodStuckNotReady
+          expr: sum by (namespace, pod, phase) (kube_pod_status_phase{namespace=~"argocd|cert-manager|dionysus|falco|longhorn-system|monitoring|trivy-system|wazuh|woodpecker", phase=~"Pending|Unknown|Failed"} == 1) > 0
+          for: 10m
+          labels:
+            severity: warning
+            tool: kubernetes
+          annotations:
+            summary: "{{ $labels.namespace }}/{{ $labels.pod }} is {{ $labels.phase }}"
+            description: "Pod {{ $labels.namespace }}/{{ $labels.pod }} has been stuck outside Running/Succeeded for more than 10 minutes."

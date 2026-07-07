@@ -4,6 +4,7 @@ resources:
   - namespace.yaml
   - postgres.statefulset.yaml
   - postgres.service.yaml
+  - wine-images.pvc.yaml
   - api.deployment.yaml
   - lwin-sync.cronjob.yaml
   - api.service.yaml
