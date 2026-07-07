@@ -13,5 +13,4 @@ resources:
   - Observability/promtail.application.yaml
   - Observability/grafana-dashboards.application.yaml
   - TrivyOperator/trivy-operator.application.yaml
-  - Falco/falco.application.yaml
-  - Wazuh/wazuh.application.yaml
+  - ../Security
