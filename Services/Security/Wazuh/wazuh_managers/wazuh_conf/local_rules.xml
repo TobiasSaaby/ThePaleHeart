@@ -50,9 +50,4 @@
     <group>vulnerability,patching,</group>
   </rule>
 
-  <rule id="100104" level="8">
-    <if_group>syscollector</if_group>
-    <description>System inventory change detected on a homelab node</description>
-    <group>inventory_change,</group>
-  </rule>
 </group>
