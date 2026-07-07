@@ -48,3 +48,13 @@ resources:
   - wazuh-dashboard.serverstransport.yaml
   - wazuh-dashboard.ingressroute.yaml
   - wazuh-agent.daemonset.yaml
+
+images:
+  - name: wazuh/wazuh-agent
+    newTag: 4.14.6
+  - name: wazuh/wazuh-dashboard
+    newTag: 4.14.6
+  - name: wazuh/wazuh-indexer
+    newTag: 4.14.6
+  - name: wazuh/wazuh-manager
+    newTag: 4.14.6
