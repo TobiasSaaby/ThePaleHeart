@@ -25,6 +25,8 @@ spec:
       labels:
         app: wazuh-manager
         node-type: master
+      annotations:
+        homelab.saaby.no/wazuh-config-revision: "2026-07-07-security-rules-v2"
       name: wazuh-manager-master
     spec:
       volumes:
