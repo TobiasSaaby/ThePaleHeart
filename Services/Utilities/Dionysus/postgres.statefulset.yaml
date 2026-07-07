@@ -20,7 +20,7 @@ spec:
         app.kubernetes.io/component: postgres
     spec:
       nodeSelector:
-        kubernetes.io/hostname: k3s-srv-3
+        kubernetes.io/hostname: k3s-srv-2
       containers:
         - name: postgres
           image: postgres:16-alpine
