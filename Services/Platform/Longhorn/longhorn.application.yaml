@@ -18,7 +18,10 @@ spec:
           # Keep local-path as the cluster default and require workloads to opt in
           # to replicated Longhorn storage explicitly.
           defaultClass: false
-          defaultClassReplicaCount: 3
+          # Current nodes do not have enough reserved Longhorn capacity for all
+          # workloads at 3 replicas. Use 2 replicas now; move critical PVCs to
+          # 3 replicas after adding storage capacity or externalizing telemetry.
+          defaultClassReplicaCount: 2
           defaultDataLocality: disabled
         preUpgradeChecker:
           # Longhorn recommends disabling the pre-upgrade Job for GitOps tools.
@@ -31,7 +34,7 @@ spec:
           snapshotterReplicaCount: 3
         defaultSettings:
           defaultDataPath: /var/lib/longhorn
-          defaultReplicaCount: '{"v1":"3","v2":"3"}'
+          defaultReplicaCount: '{"v1":"2","v2":"2"}'
           defaultDataLocality: disabled
           replicaAutoBalance: best-effort
           replicaSoftAntiAffinity: false

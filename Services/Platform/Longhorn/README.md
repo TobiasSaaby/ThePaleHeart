@@ -7,7 +7,9 @@ application-level high availability or off-cluster backups.
 
 - `local-path` remains the default StorageClass for accidental/unspecified PVCs.
 - Workloads must explicitly opt in to Longhorn with `storageClassName: longhorn`.
-- Longhorn volumes default to 3 replicas and strict anti-affinity across nodes/disks.
+- Longhorn volumes default to 2 replicas with strict anti-affinity across nodes/disks
+  on the current cluster. Use 3 replicas for critical PVCs only after adding enough
+  Longhorn capacity or moving telemetry/cache workloads elsewhere.
 - Over-provisioning is disabled (`100%`) and reserve/minimum free capacity is kept so
   rebuilds have room to complete.
 
