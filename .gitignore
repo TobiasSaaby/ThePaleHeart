@@ -26,3 +26,9 @@ Setup/Configuration/inventory/*.ini
 !Setup/Configuration/inventory/*.example.ini
 Setup/Configuration/failsafe/kubeconfig
 Setup/Configuration/.nixos-anywhere-extra-files/
+
+# Wazuh local runtime secrets/certs
+Services/Security/Wazuh/secrets.env
+Services/Security/Wazuh/certs/**/*.pem
+Services/Security/Wazuh/certs/**/*.csr
+Services/Security/Wazuh/certs/**/*.srl
