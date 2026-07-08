@@ -15,13 +15,36 @@ spec:
       releaseName: longhorn
       valuesObject:
         persistence:
-          defaultClass: true
-          defaultClassReplicaCount: 2
+          # Keep local-path as the cluster default and require workloads to opt in
+          # to replicated Longhorn storage explicitly.
+          defaultClass: false
+          defaultClassReplicaCount: 3
+          defaultDataLocality: disabled
+        preUpgradeChecker:
+          # Longhorn recommends disabling the pre-upgrade Job for GitOps tools.
+          jobEnabled: false
+        csi:
+          podAntiAffinityPreset: hard
+          attacherReplicaCount: 3
+          provisionerReplicaCount: 3
+          resizerReplicaCount: 3
+          snapshotterReplicaCount: 3
         defaultSettings:
           defaultDataPath: /var/lib/longhorn
+          defaultReplicaCount: '{"v1":"3","v2":"3"}'
+          defaultDataLocality: disabled
           replicaAutoBalance: best-effort
-          storageReservedPercentageForDefaultDisk: 10
-          storageOverProvisioningPercentage: 150
+          replicaSoftAntiAffinity: false
+          replicaDiskSoftAntiAffinity: false
+          storageOverProvisioningPercentage: 100
+          storageMinimalAvailablePercentage: 25
+          storageReservedPercentageForDefaultDisk: 20
+          allowVolumeCreationWithDegradedAvailability: false
+          disableSchedulingOnCordonedNode: true
+          nodeDrainPolicy: block-if-contains-last-replica
+          concurrentReplicaRebuildPerNodeLimit: 2
+          rebuildConcurrentSyncLimit: 1
+          autoCleanupSystemGeneratedSnapshot: true
         ingress:
           enabled: true
           ingressClassName: traefik
