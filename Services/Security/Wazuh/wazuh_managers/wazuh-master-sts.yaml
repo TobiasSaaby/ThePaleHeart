@@ -40,6 +40,39 @@ spec:
             secretName: wazuh-authd-pass
       securityContext:
         fsGroup: 101
+      initContainers:
+        - name: prepare-wazuh-runtime-paths
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              year="$(date +%Y)"
+              month="$(date +%b)"
+              mkdir -p \
+                /wazuh-data/wazuh/var/ossec/etc/shared \
+                /wazuh-data/wazuh/var/ossec/etc/lists/amazon \
+                /wazuh-data/wazuh/var/ossec/etc/lists/malicious-ioc \
+                /wazuh-data/wazuh/var/ossec/logs/alerts \
+                /wazuh-data/wazuh/var/ossec/logs/archives/${year}/${month} \
+                /wazuh-data/wazuh/var/ossec/logs/firewall/${year}/${month}
+              touch \
+                /wazuh-data/wazuh/var/ossec/etc/shared/ar.conf \
+                /wazuh-data/wazuh/var/ossec/etc/shared/agent-template.conf \
+                /wazuh-data/wazuh/var/ossec/etc/lists/audit-keys \
+                /wazuh-data/wazuh/var/ossec/etc/lists/amazon/aws-sources \
+                /wazuh-data/wazuh/var/ossec/etc/lists/amazon/aws-eventnames \
+                /wazuh-data/wazuh/var/ossec/etc/lists/malicious-ioc/malware-hashes \
+                /wazuh-data/wazuh/var/ossec/etc/lists/malicious-ioc/malicious-ip \
+                /wazuh-data/wazuh/var/ossec/etc/lists/malicious-ioc/malicious-domains \
+                /wazuh-data/wazuh/var/ossec/logs/active-responses.log \
+                /wazuh-data/wazuh/var/ossec/logs/alerts/alerts.json
+              chown -R 0:101 /wazuh-data/wazuh/var/ossec/etc/shared /wazuh-data/wazuh/var/ossec/etc/lists /wazuh-data/wazuh/var/ossec/logs
+              chmod -R g+rwX /wazuh-data/wazuh/var/ossec/etc/shared /wazuh-data/wazuh/var/ossec/etc/lists /wazuh-data/wazuh/var/ossec/logs
+          volumeMounts:
+            - name: wazuh-manager-master
+              mountPath: /wazuh-data
       containers:
         - name: wazuh-manager
           image: 'wazuh/wazuh-manager'
@@ -117,7 +150,7 @@ spec:
               name: api
           env:
             - name: INDEXER_URL
-              value: 'https://wazuh-indexer:9200'
+              value: 'https://indexer:9200'
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:

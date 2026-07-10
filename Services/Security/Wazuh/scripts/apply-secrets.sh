@@ -20,11 +20,17 @@ random_secret() {
   openssl rand -base64 32 | tr -d '\n'
 }
 
+random_cluster_key() {
+  # Wazuh cluster keys must be 32 alphanumeric characters. Base64 output can
+  # contain symbols that make wazuh-clusterd reject the configuration.
+  openssl rand -base64 48 | tr -dc 'A-Za-z0-9' | head -c 32
+}
+
 if [ ! -f "$ENV_FILE" ]; then
   umask 077
   cat >"$ENV_FILE" <<EOF
 WAZUH_AUTHD_PASS=$(random_secret)
-WAZUH_CLUSTER_KEY=$(random_secret)
+WAZUH_CLUSTER_KEY=$(random_cluster_key)
 INDEXER_USERNAME=admin
 INDEXER_PASSWORD=$(random_secret)
 DASHBOARD_USERNAME=kibanaserver

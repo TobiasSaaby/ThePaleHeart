@@ -18,6 +18,11 @@ spec:
           image: wazuh/wazuh-indexer
           imagePullPolicy: IfNotPresent
           env:
+            - name: INDEXER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: username
             - name: INDEXER_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -77,6 +82,24 @@ spec:
                 -key /usr/share/wazuh-indexer/config/certs/admin-key.pem \
                 -h indexer \
                 -p 9200
+
+              echo "Ensuring Wazuh alerts template compatibility alias exists..."
+              for i in $(seq 1 120); do
+                if curl -ksS -u "$INDEXER_USERNAME:$INDEXER_PASSWORD" https://indexer:9200/_template/wazuh >/tmp/wazuh-template.json; then
+                  break
+                fi
+                sleep 5
+              done
+              if [ ! -s /tmp/wazuh-template.json ]; then
+                echo "Wazuh Filebeat template did not appear before timeout" >&2
+                exit 1
+              fi
+              sed 's/^.*{"order"/{"order"/' /tmp/wazuh-template.json | sed 's/}}$/}/' >/tmp/wazuh-alerts-compat-template.json
+              curl -kfsS -u "$INDEXER_USERNAME:$INDEXER_PASSWORD" \
+                -H 'Content-Type: application/json' \
+                -XPUT https://indexer:9200/_template/wazuh-alerts-compat \
+                --data-binary @/tmp/wazuh-alerts-compat-template.json >/dev/null
+              echo "Wazuh indexer security bootstrap complete."
           volumeMounts:
             - name: indexer-conf
               mountPath: /mnt/indexer-conf
