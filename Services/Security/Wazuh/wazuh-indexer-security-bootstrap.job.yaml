@@ -1,0 +1,87 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wazuh-indexer-security-bootstrap
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: wazuh-indexer-security-bootstrap
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: securityadmin
+          image: wazuh/wazuh-indexer
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: INDEXER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: password
+            - name: DASHBOARD_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard-cred
+                  key: password
+            - name: OPENSEARCH_JAVA_HOME
+              value: /usr/share/wazuh-indexer/jdk
+          command:
+            - bash
+            - -lc
+            - |
+              set -euo pipefail
+
+              SECURITYADMIN=/usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh
+              HASH=/usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh
+              CONFIG_DIR=/tmp/wazuh-securityadmin-config
+
+              echo "Waiting for Wazuh indexer API..."
+              for i in $(seq 1 60); do
+                if curl -ksS https://indexer:9200/ >/tmp/indexer-status 2>/dev/null; then
+                  break
+                fi
+                sleep 5
+              done
+              if [ ! -s /tmp/indexer-status ]; then
+                echo "Wazuh indexer API did not respond before timeout" >&2
+                exit 1
+              fi
+
+              rm -rf "$CONFIG_DIR"
+              cp -a /usr/share/wazuh-indexer/config/opensearch-security "$CONFIG_DIR"
+
+              indexer_hash="$($HASH -env INDEXER_PASSWORD | tail -n 1)"
+              dashboard_hash="$($HASH -env DASHBOARD_PASSWORD | tail -n 1)"
+
+              awk -v idx="$indexer_hash" -v dash="$dashboard_hash" '
+                /^admin:/ {section="admin"}
+                /^kibanaserver:/ {section="kibanaserver"}
+                /^[A-Za-z0-9_-]+:/ && $0 !~ /^(admin|kibanaserver):/ {section=""}
+                section=="admin" && /^[[:space:]]*hash:/ {$0="  hash: \"" idx "\""}
+                section=="kibanaserver" && /^[[:space:]]*hash:/ {$0="  hash: \"" dash "\""}
+                {print}
+              ' /mnt/indexer-conf/internal_users.yml > "$CONFIG_DIR/internal_users.yml"
+
+              echo "Applying Wazuh indexer security configuration..."
+              "$SECURITYADMIN" \
+                -cd "$CONFIG_DIR" \
+                -icl \
+                -nhnv \
+                -cacert /usr/share/wazuh-indexer/config/certs/root-ca.pem \
+                -cert /usr/share/wazuh-indexer/config/certs/admin.pem \
+                -key /usr/share/wazuh-indexer/config/certs/admin-key.pem \
+                -h indexer \
+                -p 9200
+          volumeMounts:
+            - name: indexer-conf
+              mountPath: /mnt/indexer-conf
+              readOnly: true
+      volumes:
+        - name: indexer-conf
+          configMap:
+            name: indexer-conf

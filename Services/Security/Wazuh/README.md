@@ -18,6 +18,12 @@ The script creates/applies these Kubernetes secrets in the `wazuh` namespace:
 - `indexer-certs`
 - `dashboard-certs`
 
+After the indexer starts, the GitOps-managed `wazuh-indexer-security-bootstrap`
+PostSync Job runs OpenSearch `securityadmin.sh`. It initializes or updates the
+`.opendistro_security` index and derives the `admin`/`kibanaserver` bcrypt hashes
+from the runtime Kubernetes Secrets, so the dashboard credentials stay aligned
+without committing plaintext passwords.
+
 The real `.env` and generated certificate files are ignored by Git.
 
 ## SOPS migration TODO
