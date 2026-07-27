@@ -138,7 +138,7 @@ in
     ];
     settings = {
       model = {
-        default = "openai-codex/gpt-5.5";
+        default = "openai-codex/gpt-5.6";
         provider = "openai-codex";
       };
       toolsets = [ "all" ];
