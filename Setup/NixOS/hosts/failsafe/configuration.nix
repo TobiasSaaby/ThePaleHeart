@@ -125,6 +125,7 @@ in
     ];
     extraPackages = with pkgs; [
       ansible
+      curl
       docker
       gh
       git
