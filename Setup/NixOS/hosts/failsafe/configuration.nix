@@ -1,6 +1,79 @@
 { lib, pkgs, ... }:
 
 let
+  failsafeWebsite = pkgs.writeTextDir "index.html" ''
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Failsafe is online</title>
+        <style>
+          :root {
+            color-scheme: dark;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #090b12;
+            color: #edf2ff;
+          }
+          body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            background:
+              radial-gradient(circle at 20% 20%, rgba(72, 120, 255, 0.24), transparent 32rem),
+              radial-gradient(circle at 80% 70%, rgba(0, 219, 172, 0.18), transparent 30rem),
+              #090b12;
+          }
+          main {
+            width: min(42rem, calc(100vw - 3rem));
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 1.5rem;
+            background: rgba(12, 16, 28, 0.78);
+            box-shadow: 0 1.5rem 5rem rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(16px);
+          }
+          p.eyebrow {
+            margin: 0 0 0.8rem;
+            color: #73f6cf;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+          }
+          h1 {
+            margin: 0;
+            font-size: clamp(2.4rem, 8vw, 5rem);
+            line-height: 0.95;
+          }
+          p {
+            color: #bac6e8;
+            font-size: 1.08rem;
+            line-height: 1.7;
+          }
+          code {
+            color: #73f6cf;
+            background: rgba(115, 246, 207, 0.1);
+            padding: 0.16rem 0.35rem;
+            border-radius: 0.35rem;
+          }
+        </style>
+      </head>
+      <body>
+        <main>
+          <p class="eyebrow">The Pale Heart / Failsafe</p>
+          <h1>Website online.</h1>
+          <p>
+            This page is hosted directly from the Failsafe VPS using declarative NixOS configuration.
+            The k3s cluster is gone, so I am serving this myself. Naturally, I look fantastic as infrastructure.
+          </p>
+          <p>Public endpoint: <code>http://89.167.40.157/</code></p>
+        </main>
+      </body>
+    </html>
+  '';
+
   tphNixosSync = pkgs.writeShellApplication {
     name = "tph-nixos-sync";
     runtimeInputs = with pkgs; [
@@ -109,6 +182,14 @@ in
   ];
 
   virtualisation.docker.enable = true;
+
+  services.caddy = {
+    enable = true;
+    virtualHosts.":80".extraConfig = ''
+      root * ${failsafeWebsite}
+      file_server
+    '';
+  };
 
   services.hermes-agent = {
     enable = true;
@@ -229,6 +310,8 @@ in
 
   networking.firewall.allowedTCPPorts = [
     22
+    80
+    443
   ];
 
   system.stateVersion = "25.05";
