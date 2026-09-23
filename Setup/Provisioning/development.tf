@@ -38,6 +38,20 @@ resource "hcloud_firewall" "development_vps" {
     port       = "22"
     source_ips = var.development_vps.ssh_source_ips
   }
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "80"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "443"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
 }
 
 resource "hcloud_firewall_attachment" "development_vps" {
