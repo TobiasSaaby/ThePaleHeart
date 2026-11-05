@@ -191,6 +191,27 @@ in
     '';
   };
 
+  # Keep the portfolio preview separate from the main Caddy listener on :80.
+  # Reuse the original preview unit name so a switch cannot start a second copy.
+  systemd.services.failsafe-site = {
+    description = "Portfolio preview";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    unitConfig.ConditionPathExists = "/workspace/TobiasSaaby.github.io/index.html";
+    serviceConfig = {
+      User = "failsafe";
+      Group = "failsafe";
+      WorkingDirectory = "/workspace/TobiasSaaby.github.io";
+      ExecStart = "${pkgs.caddy}/bin/caddy file-server --listen :29160 --root /workspace/TobiasSaaby.github.io";
+      Restart = "on-failure";
+      RestartSec = 5;
+      NoNewPrivileges = true;
+      ProtectSystem = "strict";
+      ProtectHome = true;
+      PrivateTmp = true;
+    };
+  };
+
   services.hermes-agent = {
     enable = true;
     container.enable = false;
@@ -220,7 +241,7 @@ in
     ];
     settings = {
       model = {
-        default = "openai-codex/gpt-5.6";
+        default = "openai-codex/gpt-6.1-sol";
         provider = "openai-codex";
       };
       toolsets = [ "all" ];
@@ -312,6 +333,7 @@ in
     22
     80
     443
+    29160 # Portfolio preview; main Caddy keeps 80/443.
   ];
 
   system.stateVersion = "25.05";
