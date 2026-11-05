@@ -52,6 +52,14 @@ resource "hcloud_firewall" "development_vps" {
     port       = "443"
     source_ips = ["0.0.0.0/0", "::/0"]
   }
+
+  # Portfolio preview; keep the standard web ports available for main Caddy.
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "29160"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
 }
 
 resource "hcloud_firewall_attachment" "development_vps" {
